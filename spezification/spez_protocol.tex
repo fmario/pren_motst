@@ -1,0 +1,325 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=3.50cm, right=3.00cm, top=3.00cm, bottom=3.00cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{pdflscape}
+\usepackage{tabularx}
+\usepackage{array}
+
+\title{Specification for Communication Protocol}
+\author{}
+\date{}
+
+    \renewcommand{\arraystretch}{1.7}
+    
+% Befehlscodes:
+%--------------------------------------------------------
+\newcommand{\IMV}{0x??}
+\newcommand{\MTO}{0x??}
+\newcommand{\WTM}{0x??}
+\newcommand{\IRD}{0x??}
+\newcommand{\MOV}{0x??}
+\newcommand{\SPM}{0x??}
+\newcommand{\GAP}{0x??}
+\newcommand{\STP}{0x??}
+\newcommand{\GTP}{0x??}
+\newcommand{\CNP}{0x??}
+
+\newcommand{\SVH}{0x??}
+\newcommand{\GOH}{0x??}
+\newcommand{\SWP}{0x??}
+\newcommand{\MWP}{0x??}
+%--------------------------------------------------------
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\section*{Definitions}
+FALSE := 0x00\\
+TRUE := 0x01..0xFF\\
+
+\section{Packet Structur}
+\subsection{Command Structur}
+\begin{tabular}{|p{1.5cm}|p{2.2cm}|p{3.2cm}|p{2cm}|}
+	\hline 
+	Length \mbox{(1 Byte)} & 
+	Payload \mbox{(0..13 Bytes)} & 
+	Padding \mbox{(13 Bytes - Length)} & 
+	Checksum \mbox{(1 Byte)} \\
+	\hline 
+\end{tabular}  
+\\\\
+\begin{tabbing}
+	\hspace*{2cm} \= \kill
+	Length:  \>Länge des Befehls in Byte\\
+	Payload: \>Befehlsfolge\\
+	Padding: \>Füllbytes\\
+	\textit{Checksum}: \>\textit{Prüfsumme CRC8(Length + Payload) (optional)}\\
+\end{tabbing}
+
+\subsection{Response Structur} 
+\begin{tabular}{|p{1.5cm}|p{1.5cm}|p{2.2cm}|p{3.2cm}|p{2cm}|}
+	\hline 
+	Ack \mbox{(1 Byte)} &
+	Length \mbox{(1 Byte)} & 
+	Payload \mbox{(0..13 Bytes)} & 
+	Padding \mbox{(13 Bytes - Length)} & 
+	Checksum \mbox{(1 Byte)} \\
+	\hline 
+\end{tabular}  
+\\\\
+\begin{tabbing}
+	\hspace*{2cm} \= \kill
+	Ack:	 \>Acknowledge (TRUE wenn Befehl gültig)\\
+	Length:  \>Länge der Antwort in Byte\\
+	Payload: \>Antwort\\
+	Padding: \>Füllbytes\\
+	\textit{Checksum}: \>\textit{Prüfsumme CRC8(Length + Payload) (optional)}\\
+\end{tabbing}
+
+\begin{landscape}
+\section{Command List}
+\subsection{Generic Commands}
+\begin{tabular}{|p{1.8cm}|p{1cm}|p{1cm}|p{1.3cm}|p{1.2cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|}
+	\hline
+	\multirow{2}{2cm}{Command mnemonic} & \multicolumn{13}{c|}{Command Bytes (Payload)} \\\cline{2-14} 
+		&  Byte 0 & Byte 1 & Byte 2 & Byte 3 & Byte 4 & Byte 5 & Byte 6 & Byte 7 & Byte 8 & Byte 9 & Byte 10 & Byte 11 & Byte 12 \\ \hline
+	InitMove	& \textit{\IMV}	& Motor	& Dir & & & & & & & & & & \\\hline
+	MoveTo		& \textit{\MTO}	& Motor	& Dir & AbsPos (HB) & AbsPos & AbsPos (LB) & Speed (HB) & Speed & Speed (LB) & 
+		Acc (HB) & Acc (LB) & Dec (HB) & Dec (LB) \\\hline
+	WaitMoved	& \textit{\WTM}	& Motor	& Timeout (HB) & Timeout (LB)& & & & & & & & & \\\hline
+	IsReady	& \textit{\IRD}	& Motor	& & & & & & & & & & & \\\hline
+	Move	& \textit{\MOV}	& Motor	& Dir & Speed (HB) & Speed & Speed (LB) & Acc (HB) & Acc (LB) & Dec (HB) & Dec (LB) & & & \\\hline
+	StopMove & \textit{\SPM}& Motor	& IsHard Stop & & & & & & & & & & \\\hline
+	GetAbsPos& \textit{\GAP}& Motor	& & & & & & & & & & & \\\hline
+	SetPin	& \textit{\STP}	& PinNr	& IsHigh & & & & & & & & & & \\\hline
+	GetPin	& \textit{\GTP}	& PinNr	& & & & & & & & & & & \\\hline
+	ConfigPin& \textit{\CNP}& PinNr	& IsOutput & & & & & & & & & & \\\hline	
+\end{tabular}
+
+\subsection{Specific Commands}
+\begin{tabular}{|p{2.7cm}|p{1cm}|p{1cm}|p{1.4cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|}
+	\hline
+	\multirow{2}{2cm}{Command mnemonic} & \multicolumn{13}{c|}{Command Bytes (Payload)} \\\cline{2-14} 
+		&  Byte 0 & Byte 1 & Byte 2 & Byte 3 & Byte 4 & Byte 5 & Byte 6 & Byte 7 & Byte 8 & Byte 9 & Byte 10 & Byte 11 & Byte 12 \\ \hline
+	SaveHome	& \textit{\SVH}	& Motor	& & & & & & & & & & & \\\hline
+	GoHome		& \textit{\GOH}	& Motor	& & & & & & & & & & & \\\hline
+	SaveWayPoint& \textit{\SWP}	& Motor	& & & & & & & & & & & \\\hline
+	MoveToWayPoint& \textit{\MWP}& Motor	& WayPoint & Speed (HB) & Speed & Speed (LB) & Acc (HB) & Acc (LB) & Dec (HB) & Dec (LB) & & & \\\hline
+\end{tabular}
+\end{landscape}
+
+\subsection{InitMove (MOTOR, DIR)}
+Command code: \textbf{\IMV}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+	Byte 2 &  \multicolumn{8}{c|}{DIR}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Der gewählte MOTOR fährt zur Initialisierung in der angegebenen Richtung (DIR) bis an eine Endposition (zB. mechanischer Anschlag).
+Sobald diese Position erreicht ist, bleibt der Motor stehen und ist bereit.\\ 
+
+\subsection{MoveTo (MOTOR, DIR, ABS\_POS, SPEED, ACC, DEC)}
+Command code: \textbf{\MTO}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+	Byte 2 &  \multicolumn{8}{c|}{DIR}  \\ \hline
+	Byte 3 &  \multicolumn{8}{c|}{ABS\_POS (High Byte)}  \\ \hline
+	Byte 4 &  \multicolumn{8}{c|}{ABS\_POS (Middle Byte)}  \\ \hline
+	Byte 5 &  \multicolumn{8}{c|}{ABS\_POS (Low Byte)}  \\ \hline
+	Byte 6 &  \multicolumn{8}{c|}{SPEED (High Byte)}  \\ \hline
+	Byte 7 &  \multicolumn{8}{c|}{SPEED (Middle Byte)}  \\ \hline
+	Byte 8 &  \multicolumn{8}{c|}{SPEED (Low Byte)}  \\ \hline
+	Byte 9 &  \multicolumn{8}{c|}{ACC (High Byte)}  \\ \hline
+	Byte 10&  \multicolumn{8}{c|}{ACC (Low Byte)}  \\ \hline
+	Byte 11&  \multicolumn{8}{c|}{DEC (High Byte)}  \\ \hline
+	Byte 12&  \multicolumn{8}{c|}{DEC (Low Byte)}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Der gewählt MOTOR fährt zu eine bestimmten absoluten Position (ABS\_POS). Dabei kann dem Motor eine Richtung (DIR) sowie eine Geschwindigkeit (SPEED in $\frac{Steps}{s}$) vorgegeben werden. Des weiteren kann eine Beschleunigungsrampe (ACC in $\frac{Steps}{s^2}$) und eine Verzögerungsrampe vorgegeben werden (DEC in $\frac{Steps}{s^2}$).\\
+Falls Standardwerte für Geschwindigkeit, Beschleunigung und Verzögerung verwendet werden sollen, können die jeweiligen Parameter auf 0x00 gesetzt werden.\\
+
+\subsection{WaitMoved (MOTOR, TIMEOUT)}
+Command code: \textbf{\WTM}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+	Byte 2 &  \multicolumn{8}{c|}{TIMEOUT (High Byte)}  \\ \hline
+	Byte 3 &  \multicolumn{8}{c|}{TIMEOUT (Low Byte)}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Bei diesem Befehl wird die Antwort erst zurück gesendet, wenn der spezifizierte MOTOR still steht. Zusätzlich muss ein TIMEOUT (in $ms$) mitgegeben werden, nach welchem die Antwort auf jeden Fall gesendet wird. Falls das Timeout abgelaufen ist, wird ein Errorcode mitgesendet.\\
+
+\subsection{IsReady (MOTOR)}
+Command code: \textbf{\IRD}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Sendet mit der Antwort, ob der spezifizierte MOTOR bereit ist. Die Antwort ist TRUE, wenn der Motor keinen aktuellen Befehl am ausführen ist, andernfalls ist sie FALSE.\\
+
+\subsection{Move (MOTOR, DIR, SPEED, ACC, DEC)}
+Command code: \textbf{\IRD}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+	Byte 2 &  \multicolumn{8}{c|}{DIR}  \\ \hline
+	Byte 3 &  \multicolumn{8}{c|}{SPEED (High Byte)}  \\ \hline
+	Byte 4 &  \multicolumn{8}{c|}{SPEED (Middle Byte)}  \\ \hline
+	Byte 5 &  \multicolumn{8}{c|}{SPEED (Low Byte)}  \\ \hline
+	Byte 6 &  \multicolumn{8}{c|}{ACC (High Byte)}  \\ \hline
+	Byte 7 &  \multicolumn{8}{c|}{ACC (Low Byte)}  \\ \hline
+	Byte 8 &  \multicolumn{8}{c|}{DEC (High Byte)}  \\ \hline
+	Byte 9 &  \multicolumn{8}{c|}{DEC (Low Byte)}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Der gewählt MOTOR fährt mit der angegebenen Geschwindigkeit (SPEED in $\frac{Steps}{s}$) in die Richtung DIR. Es kann eine Beschleunigungsrampe (ACC in $\frac{Steps}{s^2}$) und eine Verzögerungsrampe vorgegeben werden (DEC in $\frac{Steps}{s^2}$).\\
+Falls Standardwerte für Geschwindigkeit, Beschleunigung und Verzögerung verwendet werden sollen, können die jeweiligen Parameter auf 0x00 gesetzt werden.\\
+
+\subsection{StopMove (MOTOR, IS\_HARDSTOP)}
+Command code: \textbf{\SPM}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+	Byte 2 &  \multicolumn{8}{c|}{IS\_HARDSTOP}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Stoppt den MOTOR. Mit dem zusätzlichen Parameter IS\_HARDSTOP kann angegeben werden, ob der Motor auf der Stelle stoppt (IS\_HARDSTOP = TRUE) oder mit der programmierten Verzögerungsrampe abbremst (IS\_HARDSTOP = FALSE).\\
+
+\subsection{GetAbsPos (MOTOR)}
+Command code: \textbf{\GAP}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Fragt die aktuelle absolute Position des MOTORs ab. Die absolute Position wird in der Antwort mit 3 Bytes beschrieben, wobei das höchste Byte als erstes geschickt wird.\\
+
+\subsection{SetPin (PIN\_NR,IS\_HIGH)}
+Command code: \textbf{\STP}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{PIN\_NR}  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{IS\_HIGH}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Dieser Befehlt setzt einen IO-Pin (PIN\_NR) des $\mu$C auf den entsprechenden Pegel (IS\_HIGH). Der Pin wird auf Vcc gesetzt, wenn der Parameter IS\_HIGH = TRUE ist, andernfalls auf 0V.\\
+Der IO-Pin muss als Output definiert sein. Wenn der gewählte Pin nicht gesetzt werden kann, enthält die Antwort einen Errorcode.\\
+
+\subsection{GetPin (PIN\_NR)}
+Command code: \textbf{\GTP}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{PIN\_NR}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Mit diesem Befehl kann der Wert eines IO-Pins (PIN\_NR) des $\mu$C abgefragt werden. In der Antwort ist der Zustand des Pins direkt enthalten (Low = FALSE, High = 0x01).\\
+Wenn der gewählte Pin nicht gelesen werden kann, enthält die Antwort einen Errorcode.\\
+
+\subsection{ConfigPin (PIN\_NR, IS\_OUTPUT)}
+Command code: \textbf{\CNP}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{PIN\_NR}  \\ \hline
+	Byte  &  \multicolumn{8}{c|}{IS\_OUTPUT}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Der gewählte IO-Pin (PIN\_NR) des $\mu$Cs wird anhand des zweiten Parameters (IS\_OUTPUT) konfiguriert. Der Pin wird zum Output, wenn IS\_OUPUT = TRUE ist, andernfalls zum Input.\\
+
+\subsection{SaveHome (MOTOR)}
+Command code: \textbf{\CNP}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Speichert die Home-Position für den gewählten MOTOR.\\
+
+\subsection{GoHome (MOTOR)}
+Command code: \textbf{\CNP}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Der entsprechende MOTOR fährt auf die Home-Position\\
+
+\subsection{SaveWayPoint (MOTOR)}
+Command code: \textbf{\CNP}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Speichert einen Wegpunkt für den gewählten MOTOR. In der Antwort ist die Nummer des gespeicherten Wegpunktes enthalten (max. 255).\\
+
+\subsection{MoveToWayPoint (MOTOR, WAY\_POINT, SPEED, ACC, DEC)}
+Command code: \textbf{\CNP}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
+	Byte 2 &  \multicolumn{8}{c|}{WAY\_POINT}  \\ \hline
+	Byte 3 &  \multicolumn{8}{c|}{SPEED (High Byte)}  \\ \hline
+	Byte 4 &  \multicolumn{8}{c|}{SPEED (Middle Byte)}  \\ \hline
+	Byte 5 &  \multicolumn{8}{c|}{SPEED (Low Byte)}  \\ \hline
+	Byte 6 &  \multicolumn{8}{c|}{ACC (High Byte)}  \\ \hline
+	Byte 7 &  \multicolumn{8}{c|}{ACC (Low Byte)}  \\ \hline
+	Byte 8 &  \multicolumn{8}{c|}{DEC (High Byte)}  \\ \hline
+	Byte 9 &  \multicolumn{8}{c|}{DEC (Low Byte)}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Der MOTOR fährt zum angegebenen Wegpunkt (WAY\_POINT). Dabei kann die Geschwindigkeit ((SPEED in $\frac{Steps}{s}$)), sowie eine Beschleunigungsrampe (ACC in $\frac{Steps}{s^2}$) und Verzögerungsrampe (DEC in $\frac{Steps}{s^2}$) vorgegeben werden.\\
+Falls Standardwerte für Geschwindigkeit, Beschleunigung und Verzögerung verwendet werden sollen, können die jeweiligen Parameter auf 0x00 gesetzt werden.\\
+
+\section{Errorcodes}
+\end{document}
