@@ -8,7 +8,7 @@
 *	Last Change:	-/-
 *	History:		-
 *	
-*	Hardware:		PIC4610-I/P
+*	Hardware:		PIC18F4610-I/P
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
@@ -16,8 +16,9 @@
 
 #include "main.h"
 
-#include "uart.h"
-#include "spi.h"
+#include "platform/uart.h"
+#include "platform/spi.h"
+#include "platform/port.h"
 
 /**
 *	Function:	main
