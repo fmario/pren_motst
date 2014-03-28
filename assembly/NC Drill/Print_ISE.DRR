@@ -1,0 +1,26 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: Print_ISE.PcbDoc   28.03.2014  23:21:04
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Print_ISE.TXT
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        15mil (0.381mm)          Round          10               3.67 Inch (93.12 mm)
+T2        19.68mil (0.49987mm)     Round          156              12.73 Inch (323.46 mm)
+T3        22.5mil (0.5715mm)       Round          68               25.57 Inch (649.52 mm)
+T4        25mil (0.635mm)          Round          26               18.07 Inch (458.89 mm)
+T5        27.56mil (0.70002mm)     Round          22               14.94 Inch (379.40 mm)
+T6        28mil (0.7112mm)         Round          7                9.10 Inch (231.06 mm)
+T7        30mil (0.762mm)          Round          6                0.76 Inch (19.28 mm)
+T8        35.43mil (0.89992mm)     Round          40               5.80 Inch (147.32 mm)
+T9        43.31mil (1.10007mm)     Round          4                0.61 Inch (15.50 mm)
+T10       47.24mil (1.1999mm)      Round          2                0.26 Inch (6.60 mm)
+T11       49.21mil (1.24993mm)     Round          56               18.51 Inch (470.24 mm)
+T12       59.06mil (1.50012mm)     Round          28               12.54 Inch (318.49 mm)
+T13       129.92mil (3.29997mm)    Round          5                13.09 Inch (332.55 mm)
+---------------------------------------------------------------------------
+Totals                                            430              135.65 Inch (3445.42 mm)
+
+Total Processing Time (hh:mm:ss) : 00:00:00
