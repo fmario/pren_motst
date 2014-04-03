@@ -8,7 +8,7 @@
 *	Last Change:	-/-
 *	History:		-
 *	
-*	Hardware:		PIC4610-I/P
+*	Hardware:		PIC18F4610-I/P
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 

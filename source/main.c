@@ -27,8 +27,13 @@
 *	Description:
 *	...
 **/
-int main(void)
-{
+int main(void){
+	
+	// Initialisation
+	init_port();
+	init_uart();
+	init_spi();
+	
 	for(;;){
 	
 	}
