@@ -16,6 +16,7 @@
 
     \renewcommand{\arraystretch}{1.7}
     
+\newcommand{\BL}{9 }
 % Befehlscodes:
 %--------------------------------------------------------
 \newcommand{\IMV}{0x00}
@@ -47,8 +48,8 @@ TRUE := 0x01..0xFF\\
 \subsection{Command Structur}
 \begin{tabular}{|p{2.2cm}|p{3.2cm}|p{2cm}|}
 	\hline 
-	Payload \mbox{(0..10 Bytes)} & 
-	Padding \mbox{(10 Bytes - Length)} & 
+	Payload \mbox{(0..\BL Bytes)} & 
+	Padding \mbox{(\BL Bytes - Length)} & 
 	\textit{Checksum \mbox{(1 Byte)}} \\
 	\hline 
 \end{tabular}  
@@ -57,15 +58,15 @@ TRUE := 0x01..0xFF\\
 	\hspace*{2cm} \= \kill
 	Payload: \>Befehlsfolge\\
 	Padding: \>Füllbytes\\
-	\textit{Checksum}: \>\textit{Prüfsumme CRC8(Length + Payload) (optional)}\\
+	\textit{Checksum}: \>\textit{Prüfsumme CRC8(Payload) (optional)}\\
 \end{tabbing}
 
 \subsection{Response Structur} 
 \begin{tabular}{|p{1.5cm}|p{2.2cm}|p{3.2cm}|p{2cm}|}
 	\hline 
 	Ack \mbox{(1 Byte)} &
-	Payload \mbox{(0..10 Bytes)} & 
-	Padding \mbox{(10 Bytes - Length)} & 
+	Payload \mbox{(0..\BL Bytes)} & 
+	Padding \mbox{(\BL Bytes - Length)} & 
 	\textit{Checksum \mbox{(1 Byte)}} \\
 	\hline 
 \end{tabular}  
@@ -75,7 +76,7 @@ TRUE := 0x01..0xFF\\
 	Ack:	 \>Acknowledge (TRUE wenn Befehl gültig)\\
 	Payload: \>Antwort\\
 	Padding: \>Füllbytes\\
-	\textit{Checksum}: \>\textit{Prüfsumme CRC8(Length + Payload) (optional)}\\
+	\textit{Checksum}: \>\textit{Prüfsumme CRC8(Payload) (optional)}\\
 \end{tabbing}
 
 
