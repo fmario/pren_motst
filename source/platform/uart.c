@@ -13,6 +13,9 @@
 **/
 
 #include <htc.h>
+
+#include "definitions.h"
+
 #include "uart.h"
 
 /**
@@ -43,14 +46,14 @@ void init_uart(void){
 
 /**
 *	Function:	send_Byte
-*	Parameter:	unsigned char cByte
+*	Parameter:	(uint8) cByte
 *	Return:		void
 *
 *	Description:
 *	Sendet ein Byte über die UART Schnittstelle, 
 *	sobald die letze Transmission erfolgt ist.
 **/
-void send_Byte(unsigned char cByte){
+void send_Byte(uint8 cByte){
 	while(TXIF);
 	TXREG = cByte;
 }
@@ -58,21 +61,21 @@ void send_Byte(unsigned char cByte){
 /**
 *	Function:	receive_Byte
 *	Parameter:	void
-*	Return:		unsigned char
+*	Return:		uint8
 *
 *	Description:
 *	Empfängt ein Byte über die UART Schnittstelle, 
 *	sobald dieses vollständig Empfangen ist.
 **/
-unsigned char receive_Byte(void){
+uint8 receive_Byte(void){
 	while(!RCIF);
 	return RCREG;
 }
 
 /**
 *	Function:	send_Array
-*	Parameter:	unsigned int iLength
-				unsigned char* cArray
+*	Parameter:	(uint8) iLength
+				(uint8*) cArray
 *	Return:		void
 *
 *	Description:
@@ -80,15 +83,15 @@ unsigned char receive_Byte(void){
 *	iLength ist die Anzahl Bytes, welche gesendet werden sollen
 *	und cArray ist der Pointer auf das erste Byte.
 **/
-void send_Array(unsigned int iLength, unsigned char* cArray){
+void send_Array(uint8 iLength, uint8* cArray){
 	for(int i = 0; i < iLength; i++)
 		send_Byte(*(cArray + i));
 }
 
 /**
 *	Function:	receive_Array
-*	Parameter:	unsigned int iLength
-				unsigned char* cBuffer
+*	Parameter:	(uint8) iLength
+				(uint8*) cBuffer
 *	Return:		void
 *
 *	Description:
@@ -96,7 +99,7 @@ void send_Array(unsigned int iLength, unsigned char* cArray){
 *	iLength ist die Anzahl Bytes, welche empfangen werden sollen
 *	und cBuffer ist der Pointer auf das erste Byte des reservierten Buffers.
 **/
-void receive_Array(unsigned int iLength, unsigned char* cBuffer){
+void receive_Array(uint8 iLength, uint8* cBuffer){
 	for(int i = 0; i < iLength; i++)
 		*(cBuffer + i) = receive_Byte();
 }

@@ -14,8 +14,12 @@
 
 #include <htc.h>
 
+#include "platform/definitions.h"
+
 #include "main.h"
 
+#include "protocol.h"
+#include "platform/interrupt.h"
 #include "platform/uart.h"
 #include "platform/spi.h"
 #include "platform/port.h"

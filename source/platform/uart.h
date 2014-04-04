@@ -14,10 +14,10 @@
 
 /**------------------ PROTOTYPES ------------------**/
 void init_uart(void);
-void send_Byte(unsigned char cByte);
+void send_Byte(uint8 cByte);
 unsigned char receive_Byte(void);
-void send_Array(unsigned int iLength, unsigned char* cArray);
-void receive_Array(unsigned int iLength, unsigned char* cBuffer);
+void send_Array(uint8 iLength, uint8* cArray);
+void receive_Array(uint8 iLength, uint8* cBuffer);
 
 /**------------------ DEFINES ------------------**/
 #ifndef UART_H
