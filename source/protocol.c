@@ -17,6 +17,22 @@
 #include "protocol.h"
 
 /**
+*	Function:	checkCommand
+*	Parameter:	void
+*	Return:		uint16
+*
+*	Description:
+*	Überprüft, ob ein gültiger Befehl vorliegt.
+**/
+uint16 parseCommand(void){
+	return 0;
+}
+
+
+
+
+
+/**
 *	Function:	swap16
 *	Parameter:	(uint16) val
 *	Return:		uint16

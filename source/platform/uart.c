@@ -53,7 +53,7 @@ void init_uart(void){
 *	Sendet ein Byte über die UART Schnittstelle, 
 *	sobald die letze Transmission erfolgt ist.
 **/
-void send_Byte(uint8 cByte){
+void uart_send_Byte(uint8 cByte){
 	while(TXIF);
 	TXREG = cByte;
 }
@@ -67,7 +67,7 @@ void send_Byte(uint8 cByte){
 *	Empfängt ein Byte über die UART Schnittstelle, 
 *	sobald dieses vollständig Empfangen ist.
 **/
-uint8 receive_Byte(void){
+uint8 uart_receive_Byte(void){
 	while(!RCIF);
 	return RCREG;
 }
@@ -83,9 +83,9 @@ uint8 receive_Byte(void){
 *	iLength ist die Anzahl Bytes, welche gesendet werden sollen
 *	und cArray ist der Pointer auf das erste Byte.
 **/
-void send_Array(uint8 iLength, uint8* cArray){
+void uart_end_Array(uint8 iLength, uint8* cArray){
 	for(int i = 0; i < iLength; i++)
-		send_Byte(*(cArray + i));
+		uart_send_Byte(*(cArray + i));
 }
 
 /**
@@ -99,7 +99,7 @@ void send_Array(uint8 iLength, uint8* cArray){
 *	iLength ist die Anzahl Bytes, welche empfangen werden sollen
 *	und cBuffer ist der Pointer auf das erste Byte des reservierten Buffers.
 **/
-void receive_Array(uint8 iLength, uint8* cBuffer){
+void uart_receive_Array(uint8 iLength, uint8* cBuffer){
 	for(int i = 0; i < iLength; i++)
-		*(cBuffer + i) = receive_Byte();
+		*(cBuffer + i) = uart_receive_Byte();
 }

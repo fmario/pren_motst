@@ -39,6 +39,9 @@ int main(void){
 	init_spi();
 	
 	for(;;){
+		if(_Flags.fRC){
+			parseCommand();
+		}
 	
 	}
 	return 0;

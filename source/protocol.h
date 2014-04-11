@@ -13,8 +13,11 @@
 **/
 
 /**------------------ PROTOTYPES ------------------**/
+uint16 parseCommand(void);
+
 uint16 swap16(uint16 val);
 uint24 swap24(uint24 val);
+
 
 /**------------------ DEFINES ------------------**/
 #ifndef PROTOCOL_H
