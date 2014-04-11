@@ -14,6 +14,10 @@
 
 /**------------------ PROTOTYPES ------------------**/
 void init_spi(void);
+void spi_send_Byte(uint8 cByte);
+uint8 spi_receive_Byte(void);
+void spi_send_Array(uint8 iLength, uint8* cArray);
+void spi_receive_Array(uint8 iLength, uint8* cBuffer);
 
 /**------------------ DEFINES ------------------**/
 #ifndef SPI_H
