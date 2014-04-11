@@ -13,7 +13,15 @@
 **/
 
 #include <htc.h>
+
+#include "definitions.h"
+
 #include "interrupt.h"
+#include "uart.h"
+#include "spi.h"
+
+command_struct _received_Data;
+flags _Flags = 0;
 
 /**
 *	Function:	enable_interrupt
@@ -38,5 +46,16 @@ void enable_interrupt(void){
 *	Handlet alle Interrupts.
 **/
 void interrupt handler(void){
-
+	/* UART Receive Interrupt */
+	if(RCIF){
+		while(_Flags.fRC);
+		/**
+		*	TODO:
+		*	Timout von 25ms impelmentieren
+		**/
+		uart_receive_Array(COMMAND_LENGTH, &_received_Data);
+	
+		//Commando komplett => Flag setzten
+		_Flags.fRC = 1;
+	}
 }
