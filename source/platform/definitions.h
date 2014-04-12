@@ -16,9 +16,16 @@
 #define MAIN_H
 
 /**------------------- CONSTANTS -------------------**/
+
+//	Länge eines Befehle in Bytes
 #define COMMAND_LENGTH 10
+
+//	Länge einer Antwort in Bytes 
 #define ANSWER_LENGTH 11
-#define NUMBER_COMMAND 13
+
+//	Anzahl Befehle
+#define NUMBER_COMMAND 14
+
 
 /**------------------- TYPEDEF -------------------**/
 typedef unsigned char uint8;
@@ -36,20 +43,16 @@ typedef unsigned short long int uint24;
 	#error Länge von uint24 inkorrekt
 #endif
 
-typedef struct __cs
-{
-	uint8	cByte[COMMAND_LENGTH];
-} command_struct;
-
 typedef struct __f
 {
-	uint8	fRC:1;	//Command Receive complete
+	uint8	fRC:1;		//Command Receive complete
+	uint8	fRT:1;		//UART Receive Timeout
 } flags;
 
 
 /**------------------- VARIABLES -------------------**/
-extern command_struct _received_Data; 
-extern uint8 _cReceivedCounter;
+extern uint8 _received_Data[COMMAND_LENGTH]; 
+extern uint8 _payload[COMMAND_LENGTH - 1];
 extern flags _Flags;
 
 

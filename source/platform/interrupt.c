@@ -20,8 +20,6 @@
 #include "uart.h"
 #include "spi.h"
 
-command_struct _received_Data;
-flags _Flags = 0;
 
 /**
 *	Function:	enable_interrupt
@@ -55,7 +53,7 @@ void interrupt handler(void){
 		**/
 		uart_receive_Array(COMMAND_LENGTH, &_received_Data);
 	
-		//Commando komplett => Flag setzten
+		//Befehl komplett => Flag setzten
 		_Flags.fRC = 1;
 	}
 }

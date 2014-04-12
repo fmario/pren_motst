@@ -12,8 +12,6 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
-#include <htc.h>
-
 #include "platform/definitions.h"
 
 #include "main.h"
@@ -23,6 +21,16 @@
 #include "platform/uart.h"
 #include "platform/spi.h"
 #include "platform/port.h"
+
+/**-------------- EXTERN VARIABLES ---------------**/
+flags _Flags = 0;
+uint8 _received_Data[COMMAND_LENGTH];
+uint8 _payload[COMMAND_LENGTH - 1];
+
+/**------------------ VARIABLES ------------------**/
+uint24(*commandptr)(uint8[]);
+uint24 response;
+/**------------------ FUNCTIONS ------------------**/
 
 /**
 *	Function:	main
@@ -40,7 +48,17 @@ int main(void){
 	
 	for(;;){
 		if(_Flags.fRC){
-			parseCommand();
+			commandptr = parseCommand();
+			_Flags.fRC = 0;
+
+			if (commandptr != 0){
+				response = commandptr(_payload);
+			}
+			else{
+				/*
+				ERROR
+				*/
+			}
 		}
 	
 	}

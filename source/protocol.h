@@ -13,7 +13,24 @@
 **/
 
 /**------------------ PROTOTYPES ------------------**/
-uint16 parseCommand(void);
+void* parseCommand(void);
+
+uint24 initMove(struct InitMovePayload* payload);
+uint24 moveTo(struct MoveToPayload* payload);
+uint24 waitMoved(struct WaitMovedPayload* payload);
+uint24 isReady(struct IsReadyPayload* payload);
+uint24 move(struct MovePayload* payload);
+uint24 stopMove(struct StopMovePayload* payload);
+uint24 getAbsPos(struct GetAbsPosPayload* payload);
+uint24 setPin(struct SetPinPayload* payload);
+uint24 getPin(struct GetPinPayload* payload);
+uint24 configPin(struct ConfigPinPayload* payload);
+uint24 saveHome(struct SaveHomePayload* payload);
+uint24 goHome(struct GoHomePayload* payload);
+uint24 saveWayPoint(struct SaveWayPointPayload* payload);
+uint24 moveToWayPoint(struct MoveToWayPointPayload* payload);
+
+uint8 getChecksum(uint8* data, uint8 length);
 
 uint16 swap16(uint16 val);
 uint24 swap24(uint24 val);
@@ -117,7 +134,7 @@ struct SaveWayPointPayload{
 	uint8 motor;
 };
 
-struct MoveToWayPoint{
+struct MoveToWayPointPayload{
 	uint8 motor;
 	uint8 wayPoint;
 	uint8 acc;
