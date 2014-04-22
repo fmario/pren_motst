@@ -54,7 +54,7 @@ void init_uart(void){
 *	sobald die letze Transmission erfolgt ist.
 **/
 void uart_send_Byte(uint8 cByte){
-	while(TXIF);
+	while(!TRMT);
 	TXREG = cByte;
 }
 

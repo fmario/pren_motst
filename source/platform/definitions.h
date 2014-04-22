@@ -15,9 +15,15 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-/**------------------- CONSTANTS -------------------**/
+/**------------------ CONFIGURATION -----------------**/
+#pragma config OSC = HS		
+#pragma config MCLRE = OFF
+#pragma config DEBUG = OFF
+#pragma config WDT = OFF
 
-//	Länge eines Befehle in Bytes
+
+/**------------------- CONSTANTS -------------------**/
+//	Länge eines Befehls in Bytes
 #define COMMAND_LENGTH 10
 
 //	Länge einer Antwort in Bytes 
@@ -26,8 +32,11 @@
 //	Anzahl Befehle
 #define NUMBER_COMMAND 14
 
+//  Input/Output Wert für TRIS-Register
+#define INPUT 1
+#define OUTPUT 0
 
-/**------------------- TYPEDEF -------------------**/
+/**-------------------- TYPEDEF -------------------**/
 typedef unsigned char uint8;
 #if sizeof(unsigned char) != 1
 	#error Länge von uint8 inkorrekt
