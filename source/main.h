@@ -19,4 +19,12 @@ int main(void);
 #ifndef MAIN_H
 #define MAIN_H
 
+#ifdef T27
+#include "platform/team27.h"
+#endif // T27
+
+#ifdef T23
+#include "platform/team23.h"
+#endif // T23
+
 #endif  // !MAIN_H

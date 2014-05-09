@@ -14,6 +14,9 @@
 
 #include "platform/definitions.h"
 
+//Team wählen (T23, T27)
+#define T27
+
 #include "main.h"
 
 #include "protocol.h"
