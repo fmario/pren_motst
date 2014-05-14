@@ -14,6 +14,7 @@
 
 #include <htc.h>
 
+#include "team.h"
 #include "definitions.h"
 
 #include "spi.h"

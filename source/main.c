@@ -14,19 +14,16 @@
 
 #include "platform/definitions.h"
 
-//Team wählen (T23, T27)
-#define T27
-
 #include "main.h"
 
 #include "protocol.h"
+#include "queue.h"
 #include "platform/interrupt.h"
 #include "platform/uart.h"
 #include "platform/spi.h"
 #include "platform/port.h"
 
 /**-------------- EXTERN VARIABLES ---------------**/
-flags _Flags = 0;
 uint8 _received_Data[COMMAND_LENGTH];
 uint8 _payload[COMMAND_LENGTH - 1];
 
@@ -48,19 +45,17 @@ int main(void){
 	init_port();
 	init_uart();
 	init_spi();
+	reset_Queue();
 	
 	for(;;){
-		if(_Flags.fRC){
+		if(read_Queue(&_received_Data)){
 			commandptr = parseCommand();
-			_Flags.fRC = 0;
 
 			if (commandptr != 0){
 				response = commandptr(_payload);
 			}
 			else{
-				/*
-				ERROR
-				*/
+				uart_send_Array(ANSWER_LENGTH, err_InvCommand);
 			}
 		}
 	}

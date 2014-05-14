@@ -83,7 +83,7 @@ uint8 uart_receive_Byte(void){
 *	iLength ist die Anzahl Bytes, welche gesendet werden sollen
 *	und cArray ist der Pointer auf das erste Byte.
 **/
-void uart_end_Array(uint8 iLength, uint8* cArray){
+void uart_send_Array(uint8 iLength, uint8* cArray){
 	for(int i = 0; i < iLength; i++)
 		uart_send_Byte(*(cArray + i));
 }

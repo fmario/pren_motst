@@ -35,6 +35,12 @@ uint8 getChecksum(uint8* data, uint8 length);
 uint16 swap16(uint16 val);
 uint24 swap24(uint24 val);
 
+/**----------------- VARIABLE ------------------**/
+
+//Error codes
+extern uint8 err_fBuffer[];
+extern uint8 err_InvCommand[];
+
 
 /**------------------ DEFINES ------------------**/
 #ifndef PROTOCOL_H

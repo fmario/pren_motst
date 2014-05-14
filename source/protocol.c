@@ -34,6 +34,10 @@ const void* pCommand[NUMBER_COMMAND] = {
 					&moveToWayPoint
 				};
 
+//Error codes
+uint8 err_fBuffer[ANSWER_LENGTH] = {0x00, 0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 /*, CHECKSUM*/};
+uint8 err_InvCommand[ANSWER_LENGTH] = {0x00, 0xE1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 /*, CHECKSUM*/};
+
 /**
 *	Function:	checkCommand
 *	Parameter:	void
@@ -41,7 +45,7 @@ const void* pCommand[NUMBER_COMMAND] = {
 *
 *	Description:
 *	Überprüft, ob ein gültiger Befehl vorliegt 
-und gibt die Adresse auf entsprechende Funktion zurück.
+*	und gibt die Adresse auf entsprechende Funktion zurück.
 **/
 void* parseCommand(void){
 	if (_received_Data[0] < NUMBER_COMMAND){
@@ -49,7 +53,7 @@ void* parseCommand(void){
 		for (int i = 0; i < NUMBER_COMMAND - 1; i++){
 			_payload[i] = _received_Data[i + 1];
 		}
-		return pCommand[_received_Data[0]];
+		return (void*)pCommand[_received_Data[0]];
 	}
 	else{
 		return 0;

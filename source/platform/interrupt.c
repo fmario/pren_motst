@@ -16,7 +16,10 @@
 
 #include "definitions.h"
 
+#include "../protocol.h"
+
 #include "interrupt.h"
+#include "../queue.h"
 #include "uart.h"
 #include "spi.h"
 
@@ -46,14 +49,7 @@ void enable_interrupt(void){
 void interrupt handler(void){
 	/* UART Receive Interrupt */
 	if(RCIF){
-		while(_Flags.fRC);
-		/**
-		*	TODO:
-		*	Timout von 25ms impelmentieren
-		**/
-		uart_receive_Array(COMMAND_LENGTH, &_received_Data);
-	
-		//Befehl komplett => Flag setzten
-		_Flags.fRC = 1;
+		if(write_Queue(uart_receive_Byte()))
+			uart_send_Array(ANSWER_LENGTH, err_fBuffer);
 	}
 }

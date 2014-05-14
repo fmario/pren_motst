@@ -1,5 +1,5 @@
 /**
-*	File:	main.h
+*	File:	team.h
 *	Date:	27.03.2014
 *	Author:	Felder Mario
 *
@@ -16,7 +16,15 @@
 int main(void);
 
 /**------------------ DEFINES ------------------**/
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef TEAM_H
+#define TEAM_H
 
-#endif  // !MAIN_H
+#ifdef T27
+#include "team27.h"
+#endif // T27
+
+#ifdef T23
+#include "team23.h"
+#endif // T23
+
+#endif  // !TEAM_H
