@@ -306,5 +306,25 @@ Command code: \textbf{\MWP}\\\\
 Der MOTOR fährt zum angegebenen Wegpunkt (WAY\_POINT). Dabei kann die Geschwindigkeit ((SPEED in $\frac{Steps}{s}$)), sowie eine Beschleunigungsrampe (ACC in $\frac{Steps}{s^2}$) und Verzögerungsrampe (DEC in $\frac{Steps}{s^2}$) vorgegeben werden.\\
 Falls Standardwerte für Geschwindigkeit, Beschleunigung und Verzögerung verwendet werden sollen, können die jeweiligen Parameter auf 0x00 gesetzt werden.\\
 
+\newpage
 \section{Errorcodes}
+Errorcodes werden mit der Response Structure gesendet. 
+Das Acknowledge Byte ist auf den Wert 0x00 und das erste Byte beinhaltet den Error-Code.\\\\
+\begin{tabular}{|p{1.2cm}|p{2cm}|p{4cm}|p{2cm}|}
+	\hline
+ 		Ack & Byte 0 & Byte 1 - Byte 9 & \textit{Checksum}\\\hline
+	 	0x00 & Error code & Padding (0x00) & \\ \hline
+\end{tabular}\\\\
+
+\subsection{Full Buffer}
+Error code: \textbf{0xE0}
+\paragraph*{Description\\}
+Der Prozessor hat noch nicht alle Befehle abgearbeitet. Der Befehls-Buffer ist voll und es können keine Weiteren Befehle gespeichert werden.
+
+\subsection{Invalide Command}
+
+Error code: \textbf{0xE1}
+\paragraph*{Description\\}
+Es wurde ein invalider Befehl geschickt.
+
 \end{document}
