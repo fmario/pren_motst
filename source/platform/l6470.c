@@ -435,6 +435,8 @@ L6470_status L6470_ParseStatus(uint16 u16_state){
 	state.STEP_LOSS_A = (u16_state & 8192) >> 13;
 	state.STEP_LOSS_B = (u16_state & 16384) >> 14;
 	state.SCK_MOD = (u16_state & 32768) >> 15;
+
+	return state;
 }
 
 /**
