@@ -11,8 +11,12 @@
 *	Hardware:		PIC18F4610-I/P
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
+#include <htc.h>
+
+#include "definitions.h"
 
 #include "L6470.h"
+#include "spi.h"
 
 uint8 cCommand[4] = {0, 0, 0, 0};
 uint8 cResponse[3] = {0, 0, 0};
@@ -32,7 +36,7 @@ void L6470_setParam(uint8 address, uint8 param, uint24 value)
 	cCommand[0] = cmd & param;
 	*(uint24)&cCommand[1] = value;
 	
-	spi_send_Command(address, 4, &cCommand, 0, NULL);
+	spi_send_Command(address, 4, cCommand, 0, NULL);
 }
 
 /**
@@ -48,7 +52,7 @@ uint24	L6470_getParam(uint8 address, uint8 param)
 	uint8 cmd = GET_PARAM;
 	cCommand[0] = cmd & param;
 	
-	spi_send_Command(address, 1, &cCommand, 3, &cResponse);
+	spi_send_Command(address, 1, cCommand, 3, cResponse);
 	
 	return *(uint24*)cResponse;
 }
@@ -68,7 +72,7 @@ void L6470_run(uint8 address, uint8 dir, uint24 spd)
 	cCommand[0] = cmd & dir;
 	*(uint24)&cCommand[1] = spd;
 	
-	spi_send_Command(address, 4, &cCommand, 0, NULL);
+	spi_send_Command(address, 4, cCommand, 0, NULL);
 }
 
 /**
@@ -84,7 +88,7 @@ void L6470_stepClock(uint8 address, uint8 dir)
 	uint8 cmd = STEP_CLOCK;
 	cCommand[0] = cmd & dir;
 	
-	spi_send_Command(address, 1, &cCommand, 0, NULL);
+	spi_send_Command(address, 1, cCommand, 0, NULL);
 }
 
 /**
@@ -102,7 +106,7 @@ void L6470_move(uint8 address, uint8 dir, uint24 n_step)
 	cCommand[0] = cmd & dir;
 	*(uint24)&cCommand[1] = n_step;
 	
-	spi_send_Command(address, 4, &cCommand, 0, NULL);
+	spi_send_Command(address, 4, cCommand, 0, NULL);
 }
 
 /**
@@ -116,10 +120,10 @@ void L6470_move(uint8 address, uint8 dir, uint24 n_step)
 void L6470_goTo(uint8 address, uint24 abs_pos)
 {
 	uint8 cmd = GOTO;
-	cCommand[0] = cmd & dir;
+	cCommand[0] = cmd;
 	*(uint24)&cCommand[1] = abs_pos;
 	
-	spi_send_Command(address, 4, &cCommand, 0, NULL);
+	spi_send_Command(address, 4, cCommand, 0, NULL);
 }
 
 /**
@@ -137,7 +141,7 @@ void L6470_goTo_Dir(uint8 address, uint8 dir, uint24 abs_pos)
 	cCommand[0] = cmd & dir;
 	*(uint24)&cCommand[1] = abs_pos;
 	
-	spi_send_Command(address, 4, &cCommand, 0, NULL);
+	spi_send_Command(address, 4, cCommand, 0, NULL);
 }
 
 /**
@@ -156,7 +160,7 @@ void L6470_goUntil(uint8 address, uint8 act, uint8 dir, uint24 spd)
 	cCommand[0] = cmd & dir & (act<<3);
 	*(uint24)&cCommand[1] = spd;
 	
-	spi_send_Command(address, 4, &cCommand, 0, NULL);
+	spi_send_Command(address, 4, cCommand, 0, NULL);
 }
 
 /**
@@ -173,7 +177,7 @@ void L6470_releaseSW(uint8 address, uint8 act, uint8 dir)
 	uint8 cmd = RELEASE_SW;
 	cCommand[0] = cmd & dir & (act<<3);
 		
-	spi_send_Command(address, 1, &cCommand, 0, NULL);
+	spi_send_Command(address, 1, cCommand, 0, NULL);
 }
 
 /**
@@ -188,7 +192,7 @@ void L6470_goHome(uint8 address)
 	uint8 cmd = GO_HOME;
 	cCommand[0] = cmd;
 		
-	spi_send_Command(address, 1, &cCommand, 0, NULL);
+	spi_send_Command(address, 1, cCommand, 0, NULL);
 }
 
 /**
@@ -203,7 +207,7 @@ void L6470_goMark(uint8 address)
 	uint8 cmd = GO_MARK;
 	cCommand[0] = cmd;
 		
-	spi_send_Command(address, 1, &cCommand, 0, NULL);
+	spi_send_Command(address, 1, cCommand, 0, NULL);
 }
 
 /**
@@ -218,7 +222,7 @@ void L6470_resetPos(uint8 address)
 	uint8 cmd = RESET_POS;
 	cCommand[0] = cmd;
 		
-	spi_send_Command(address, 1, &cCommand, 0, NULL);
+	spi_send_Command(address, 1, cCommand, 0, NULL);
 }
 
 /**
@@ -233,7 +237,7 @@ void L6470_resetDevice(uint8 address)
 	uint8 cmd = RESET_DEVICE;
 	cCommand[0] = cmd;
 		
-	spi_send_Command(address, 1, &cCommand, 0, NULL);
+	spi_send_Command(address, 1, cCommand, 0, NULL);
 }
 
 /**
@@ -248,7 +252,7 @@ void L6470_softStop(uint8 address)
 	uint8 cmd = SOFT_STOP;
 	cCommand[0] = cmd;
 		
-	spi_send_Command(address, 1, &cCommand, 0, NULL);
+	spi_send_Command(address, 1, cCommand, 0, NULL);
 }
 
 /**
@@ -263,7 +267,7 @@ void L6470_hardStop(uint8 address)
 	uint8 cmd = HARD_STOP;
 	cCommand[0] = cmd;
 		
-	spi_send_Command(address, 1, &cCommand, 0, NULL);
+	spi_send_Command(address, 1, cCommand, 0, NULL);
 }
 
 /**
@@ -278,7 +282,7 @@ void L6470_softHiZ(uint8 address)
 	uint8 cmd = SOFT_HIZ;
 	cCommand[0] = cmd;
 		
-	spi_send_Command(address, 1, &cCommand, 0, NULL);
+	spi_send_Command(address, 1, cCommand, 0, NULL);
 }
 
 /**
@@ -293,7 +297,7 @@ void L6470_hardHiZ(uint8 address)
 	uint8 cmd = HARD_HIZ;
 	cCommand[0] = cmd;
 		
-	spi_send_Command(address, 1, &cCommand, 0, NULL);
+	spi_send_Command(address, 1, cCommand, 0, NULL);
 }
 
 /**
@@ -309,7 +313,7 @@ uint16 L6470_getStatus(uint8 address)
 	uint8 cmd = GET_PARAM;
 	cCommand[0] = cmd;
 	
-	spi_send_Command(address, 1, &cCommand, 2, &cResponse);
+	spi_send_Command(address, 1, cCommand, 2, cResponse);
 	
 	return *(uint16*)cResponse;
 }

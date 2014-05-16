@@ -19,7 +19,7 @@
 #include "protocol.h"
 #include "platform\team.h"
 
-#include "platform\team27.h"
+#include "platform\L6470.h"
 
 //Array mit allen Funktionspointern
 const void* pCommand[NUMBER_COMMAND] = {
@@ -80,7 +80,7 @@ uint24 initMove(struct InitMovePayload* payload){
 
 	if(iMotNr < SPI_MOTORS){
 		L6470_setParam(iMotNr, ACC, L6470_accCalc((*payload).acc));
-		L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload)..dec));
+		L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload).dec));
 		L6470_run(iMotNr, (*payload).direction, L6470_speedCalc((*payload).speed));
 
 		while(!PORTB_IO.nFlag & (1<<iMotNr));
@@ -107,8 +107,22 @@ uint24 initMove(struct InitMovePayload* payload){
 *	...
 **/
 uint24 moveTo(struct MoveToPayload* payload){
+	uint8 iMotNr = (*payload).motor;
 
-	return 0;
+	if(iMotNr < SPI_MOTORS){
+		if((*payload).acc != 0)
+			L6470_setParam(iMotNr, ACC, L6470_accCalc((*payload).acc));
+		if((*payload).dec != 0)
+			L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload).dec));
+		if((*payload).speed != 0)
+			L6470_setParam(iMotNr, MAX_SPEED, L6470_maxSpeedCalc((*payload).dec));
+
+		L6470_goTo_Dir(iMotNr, (*payload).direction, (*payload).absPos);
+
+		return 0;
+	}
+
+	return NULL;
 }
 
 /**
