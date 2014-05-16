@@ -27,10 +27,10 @@
 #define COMMAND_LENGTH 10
 
 //	Länge einer Antwort in Bytes 
-#define ANSWER_LENGTH 11
+#define ANSWER_LENGTH 4
 
 //	Anzahl Befehle
-#define NUMBER_COMMAND 14
+#define NUMBER_COMMAND 15
 
 //  Input/Output Wert für TRIS-Register
 #define INPUT 1

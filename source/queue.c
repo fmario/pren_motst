@@ -15,7 +15,7 @@
 #include "platform/definitions.h"
 
 #include "queue.h"
-
+#include "platform\uart.h"
 
 /**------------------ VARIABLES ------------------**/
 queue CommandQueue;
@@ -91,7 +91,7 @@ int write_Queue(uint8 cData){
 	if(iWD == COMMAND_LENGTH - 1)
 	{
 		CommandQueue.qNodes[iWN].fRead = 1;
-		CommandQueue.iCounterWrite = (++CommandQueue.iCounterWrite)%NUMBER_NODES;
+		CommandQueue.iCounterWrite = (++iWN)%NUMBER_NODES;
 	}else{
 		CommandQueue.qNodes[iWN].iCounter++;
 	}

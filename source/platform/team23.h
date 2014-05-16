@@ -16,6 +16,17 @@
 /**------------------ DEFINES ------------------**/
 #ifndef TEAM23_H
 #define TEAM23_H
+
+// Anzahl SPI Motore
+#define SPI_MOTORS 3
+
+// Anzahl Step gesteuerte SM
+#define STEPPERS 0
+
+// Anzahl DC Motors
+#define DC_MOTORS 1
+
+
 // Register: PORTA
 extern volatile unsigned char           PRT_A               @ 0xF80;
 
@@ -59,8 +70,9 @@ extern volatile unsigned char           PRT_C               @ 0xF82;
 
 extern volatile union {
     struct {
-        unsigned DC_RW					:1;
+		unsigned						:1;
         unsigned DC_FW					:1;
+        unsigned DC_RW					:1;
     };
 } PORTC_IO @ 0xF82;
 
@@ -122,6 +134,8 @@ extern volatile bit                     nFlag1              @ (((unsigned) &PRT_
 extern volatile bit                     nFlag2              @ (((unsigned) &PRT_B)*8) + 6;
 extern volatile bit                     nFlag3              @ (((unsigned) &PRT_B)*8) + 7;
 
+extern volatile bit                     DC_FW               @ (((unsigned) &PRT_C)*8) + 1;
+extern volatile bit                     DC_RW               @ (((unsigned) &PRT_C)*8) + 2;
 
 extern volatile bit                     nCS1                @ (((unsigned) &PRT_E)*8) + 0;
 extern volatile bit                     nCS2                @ (((unsigned) &PRT_E)*8) + 1;

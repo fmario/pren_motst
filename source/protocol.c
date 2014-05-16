@@ -12,9 +12,14 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
+#include <htc.h>
+
 #include "platform/definitions.h"
 
 #include "protocol.h"
+#include "platform\team.h"
+
+#include "platform\team27.h"
 
 //Array mit allen Funktionspointern
 const void* pCommand[NUMBER_COMMAND] = {
@@ -31,12 +36,14 @@ const void* pCommand[NUMBER_COMMAND] = {
 					&saveHome,
 					&goHome,
 					&saveWayPoint,
-					&moveToWayPoint
+					&moveToWayPoint,
+					&dcMove
 				};
 
 //Error codes
-uint8 err_fBuffer[ANSWER_LENGTH] = {0x00, 0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 /*, CHECKSUM*/};
-uint8 err_InvCommand[ANSWER_LENGTH] = {0x00, 0xE1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 /*, CHECKSUM*/};
+uint8 err_fBuffer[ANSWER_LENGTH] = {0x00, 0xE0, 0x00, 0x00 /*, CHECKSUM*/};
+uint8 err_InvCommand[ANSWER_LENGTH] = {0x00, 0xE1, 0x00, 0x00 /*, CHECKSUM*/};
+uint8 err_InvParam[ANSWER_LENGTH] = {0x00, 0xE2, 0x00, 0x00 /*, CHECKSUM*/};
 
 /**
 *	Function:	checkCommand
@@ -69,7 +76,26 @@ void* parseCommand(void){
 *	...
 **/
 uint24 initMove(struct InitMovePayload* payload){
-	return 0;
+	uint8 iMotNr = (*payload).motor;
+
+	if(iMotNr < SPI_MOTORS){
+		L6470_setParam(iMotNr, ACC, L6470_accCalc((*payload).acc));
+		L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload)..dec));
+		L6470_run(iMotNr, (*payload).direction, L6470_speedCalc((*payload).speed));
+
+		while(!PORTB_IO.nFlag & (1<<iMotNr));
+
+		L6470_hardStop(iMotNr);
+		L6470_getStatus(iMotNr);
+		/*
+			DO ANTYTHING
+		*/
+		L6470_resetPos(iMotNr);
+
+		return 0;
+	}
+
+	return NULL;
 }
 
 /**
@@ -81,6 +107,7 @@ uint24 initMove(struct InitMovePayload* payload){
 *	...
 **/
 uint24 moveTo(struct MoveToPayload* payload){
+
 	return 0;
 }
 
@@ -93,6 +120,7 @@ uint24 moveTo(struct MoveToPayload* payload){
 *	...
 **/
 uint24 waitMoved(struct WaitMovedPayload* payload){
+
 	return 0;
 }
 
@@ -225,6 +253,42 @@ uint24 saveWayPoint(struct SaveWayPointPayload* payload){
 *	...
 **/
 uint24 moveToWayPoint(struct MoveToWayPointPayload* payload){
+	return 0;
+}
+
+/**
+*	Function:	dcMove
+*	Parameter:	(struct DcMovePayload*) data
+*	Return:		uint24
+*
+*	Description:
+*	...
+**/
+uint24 dcMove(struct DcMovePayload* payload){
+	if(DC_MOTORS){
+		if((*payload).dir){
+			DC_FW = 0;
+			DC_RW = 1;
+		}else{
+			DC_RW = 0;
+			DC_FW = 1;
+		}
+		
+		for(uint16 i = 0; i < (*payload).time; i++){
+			for(int j = 0; j < 7; j++){
+				_delay3(4);
+			}
+				
+		}
+
+		if((*payload).goHiZ){
+			DC_FW = 1;
+			DC_RW = 1;
+		}else{
+			DC_FW = 0;
+			DC_RW = 0;
+		}
+	}
 	return 0;
 }
 

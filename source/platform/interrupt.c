@@ -49,7 +49,7 @@ void enable_interrupt(void){
 void interrupt handler(void){
 	/* UART Receive Interrupt */
 	if(RCIF){
-		if(write_Queue(uart_receive_Byte()))
+		if(!write_Queue(uart_receive_Byte()))
 			uart_send_Array(ANSWER_LENGTH, err_fBuffer);
 	}
 }

@@ -29,7 +29,7 @@ uint8 _payload[COMMAND_LENGTH - 1];
 
 /**------------------ VARIABLES ------------------**/
 uint24(*commandptr)(uint8[]);
-uint24 response;
+struct AnswerStructure response;
 /**------------------ FUNCTIONS ------------------**/
 
 /**
@@ -45,14 +45,21 @@ int main(void){
 	init_port();
 	init_uart();
 	init_spi();
+	enable_interrupt();
 	reset_Queue();
-	
+
 	for(;;){
 		if(read_Queue(&_received_Data)){
-			commandptr = parseCommand();
+			commandptr = (uint24*)parseCommand();
 
 			if (commandptr != 0){
-				response = commandptr(_payload);
+				response.payload = commandptr(_payload);
+				response.ack = 1;
+
+				if(response.payload != NULL)
+					uart_send_Array(ANSWER_LENGTH, (uint8*)&response);
+				else
+					uart_send_Array(ANSWER_LENGTH, err_InvParam);
 			}
 			else{
 				uart_send_Array(ANSWER_LENGTH, err_InvCommand);

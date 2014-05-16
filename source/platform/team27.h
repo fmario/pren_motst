@@ -17,6 +17,15 @@
 #ifndef TEAM27_H
 #define TEAM27_H
 	
+// Anzahl SPI Motore
+#define SPI_MOTORS 3
+
+// Anzahl Step gesteuerte SM
+#define STEPPERS 1
+
+// Anzahl DC Motors
+#define DC_MOTORS 1
+
 // Register: PORTA
 extern volatile unsigned char           PRT_A               @ 0xF80;
 

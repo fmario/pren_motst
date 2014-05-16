@@ -12,7 +12,12 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
+#include <htc.h>
+
+#include "definitions.h"
+
 #include "port.h"
+#include "team.h"
 
 /**
 *	Function:	init_spi
@@ -22,5 +27,6 @@
 *	Initialisiert die SPI-Schnittstelle
 **/
 void init_port(void){
-
+	TRISC1 = OUTPUT;
+	TRISC2 = OUTPUT;
 }

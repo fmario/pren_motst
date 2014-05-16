@@ -29,6 +29,7 @@ uint24 saveHome(struct SaveHomePayload* payload);
 uint24 goHome(struct GoHomePayload* payload);
 uint24 saveWayPoint(struct SaveWayPointPayload* payload);
 uint24 moveToWayPoint(struct MoveToWayPointPayload* payload);
+uint24 dcMove(struct DcMovePayload* payload);
 
 uint8 getChecksum(uint8* data, uint8 length);
 
@@ -40,7 +41,7 @@ uint24 swap24(uint24 val);
 //Error codes
 extern uint8 err_fBuffer[];
 extern uint8 err_InvCommand[];
-
+extern uint8 err_InvParam[];
 
 /**------------------ DEFINES ------------------**/
 #ifndef PROTOCOL_H
@@ -53,6 +54,9 @@ struct InitMovePayload
 {
     uint8 motor;
     uint8 direction;
+	uint8 speed;
+    uint8 acc;
+    uint8 dec;
 };
 
 struct MoveToPayload
@@ -145,6 +149,17 @@ struct MoveToWayPointPayload{
 	uint8 wayPoint;
 	uint8 acc;
 	uint8 dcc;
+};
+
+struct DcMovePayload{
+	uint8 dir;
+	uint16 time;
+	uint8 goHiZ;
+};
+
+struct AnswerStructure{
+	uint8 ack;
+	uint24 payload;
 };
 
 /**--------------------------------
