@@ -12,15 +12,14 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
-#include <htc.h>
-
-#include "platform/definitions.h"
+#include "platform\definitions.h"
 
 #include "protocol.h"
 #include "platform\team.h"
 
 #include "platform\L6470.h"
 
+/**----------------- CONSTANTS -----------------**/
 //Array mit allen Funktionspointern
 const void* pCommand[NUMBER_COMMAND] = {
 					&initMove,
@@ -40,10 +39,22 @@ const void* pCommand[NUMBER_COMMAND] = {
 					&dcMove
 				};
 
+/**-------------- EXTERN VARIABLES ---------------**/
 //Error codes
-uint8 err_fBuffer[ANSWER_LENGTH] = {0x00, 0xE0, 0x00, 0x00 /*, CHECKSUM*/};
-uint8 err_InvCommand[ANSWER_LENGTH] = {0x00, 0xE1, 0x00, 0x00 /*, CHECKSUM*/};
-uint8 err_InvParam[ANSWER_LENGTH] = {0x00, 0xE2, 0x00, 0x00 /*, CHECKSUM*/};
+const uint8 err_fBuffer = 0xE0;
+const uint8 err_InvCommand = 0xE1;
+const uint8 err_InvAddress = 0xE2;
+const uint8 err_MotornRdy = 0xE3;
+const uint8 err_MotorErr = 0xE4;
+const uint8 err_fWayPointBuf = 0xE5;
+const uint8 err_InvWayPoint = 0xE6;
+
+/**------------------ VARIABLES ------------------**/
+uint24 wayPoint[SPI_MOTORS][NUMBER_WAYPOINTS];
+uint8 cntrWayPoint[SPI_MOTORS];
+rspstruct response;
+
+/**------------------ FUNCTIONS ------------------**/
 
 /**
 *	Function:	checkCommand
@@ -67,6 +78,13 @@ void* parseCommand(void){
 	}
 }
 
+void initResp(rspstruct* resp){
+	(*resp).ack = 0;
+	(*resp).payload0 = 0;
+	(*resp).payload1 = 0;
+	(*resp).payload2 = 0;
+}
+
 /**
 *	Function:	initMove
 *	Parameter:	(struct InitMovePayload*) data
@@ -75,27 +93,43 @@ void* parseCommand(void){
 *	Description:
 *	...
 **/
-uint24 initMove(struct InitMovePayload* payload){
+rspstruct initMove(struct InitMovePayload* payload){
 	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
 
 	if(iMotNr < SPI_MOTORS){
-		L6470_setParam(iMotNr, ACC, L6470_accCalc((*payload).acc));
-		L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload).dec));
+
+		if (L6470_checkStartConditions(iMotNr) == 0){
+			response.payload0 = err_MotornRdy;
+			return response;
+		}
+
+		if ((*payload).acc != 0)
+			L6470_setParam(iMotNr, ACC, L6470_accCalc((*payload).acc));
+		if ((*payload).dec != 0)
+			L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload).dec));
+
 		L6470_run(iMotNr, (*payload).direction, L6470_speedCalc((*payload).speed));
 
-		while(!PORTB_IO.nFlag & (1<<iMotNr));
+		while(PORTB_IO.nFlag & (1<<iMotNr));
 
 		L6470_hardStop(iMotNr);
-		L6470_getStatus(iMotNr);
-		/*
-			DO ANTYTHING
-		*/
+
+		L6470_status state = L6470_ParseStatus(L6470_getStatus(iMotNr));
+
+		if (state.OCD && state.STEP_LOSS_A && state.STEP_LOSS_B){
+			response.payload0 = err_MotorErr;
+			return response; //Kein Schritt verloren oder Overcurrent
+		}
+
 		L6470_resetPos(iMotNr);
 
-		return 0;
+		response.ack = 1;
+		return response;
 	}
 
-	return NULL;
+	response.payload0 = err_InvAddress;
+	return response;
 }
 
 /**
@@ -106,23 +140,31 @@ uint24 initMove(struct InitMovePayload* payload){
 *	Description:
 *	...
 **/
-uint24 moveTo(struct MoveToPayload* payload){
+rspstruct moveTo(struct MoveToPayload* payload){
 	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
 
 	if(iMotNr < SPI_MOTORS){
+		if (L6470_checkStartConditions(iMotNr) == 0){
+			response.payload0 = err_MotornRdy;
+			return response;
+		}
+
 		if((*payload).acc != 0)
 			L6470_setParam(iMotNr, ACC, L6470_accCalc((*payload).acc));
 		if((*payload).dec != 0)
 			L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload).dec));
 		if((*payload).speed != 0)
-			L6470_setParam(iMotNr, MAX_SPEED, L6470_maxSpeedCalc((*payload).dec));
+			L6470_setParam(iMotNr, MAX_SPEED, L6470_maxSpeedCalc((*payload).speed));
 
 		L6470_goTo_Dir(iMotNr, (*payload).direction, (*payload).absPos);
 
-		return 0;
+		response.ack = 1;
+		return response;
 	}
 
-	return NULL;
+	response.payload0 = err_InvAddress;
+	return response;
 }
 
 /**
@@ -133,9 +175,21 @@ uint24 moveTo(struct MoveToPayload* payload){
 *	Description:
 *	...
 **/
-uint24 waitMoved(struct WaitMovedPayload* payload){
+rspstruct waitMoved(struct WaitMovedPayload* payload){
+	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
 
-	return 0;
+	if (iMotNr < SPI_MOTORS){
+		/*
+		
+		TODO **********************************************************************************************************
+		
+		*/
+	}
+
+
+	response.ack = 1;
+	return response;
 }
 
 /**
@@ -146,8 +200,18 @@ uint24 waitMoved(struct WaitMovedPayload* payload){
 *	Description:
 *	...
 **/
-uint24 isReady(struct IsReadyPayload* payload){
-	return 0;
+rspstruct isReady(struct IsReadyPayload* payload){
+	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
+
+	if (iMotNr < SPI_MOTORS){
+		response.payload0 = L6470_isMoving(iMotNr) ? 1 : 0;
+		response.ack = 1;
+		return response;
+	}
+
+	response.payload0 = err_InvAddress;
+	return response;
 }
 
 /**
@@ -158,8 +222,29 @@ uint24 isReady(struct IsReadyPayload* payload){
 *	Description:
 *	...
 **/
-uint24 move(struct MovePayload* payload){
-	return 0;
+rspstruct move(struct MovePayload* payload){
+	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
+
+	if (iMotNr < SPI_MOTORS){
+		if (L6470_checkStartConditions(iMotNr) == 0){
+			response.payload0 = err_MotornRdy;
+			return response;
+		}
+
+		if ((*payload).acc != 0)
+			L6470_setParam(iMotNr, ACC, L6470_accCalc((*payload).acc));
+		if ((*payload).dec != 0)
+			L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload).dec));
+
+		L6470_run(iMotNr, (*payload).direction, (*payload).speed);
+
+		response.ack = 1;
+		return response;
+	}
+
+	response.payload0 = err_InvAddress;
+	return response;
 }
 
 /**
@@ -170,8 +255,23 @@ uint24 move(struct MovePayload* payload){
 *	Description:
 *	...
 **/
-uint24 stopMove(struct StopMovePayload* payload){
-	return 0;
+rspstruct stopMove(struct StopMovePayload* payload){
+	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
+
+	if (iMotNr < SPI_MOTORS){
+
+		if ((*payload).isHardStop != 0)
+			L6470_hardStop(iMotNr);
+		else
+			L6470_softStop(iMotNr);
+
+		response.ack = 1;
+		return response;
+	}
+
+	response.payload0 = err_InvAddress;
+	return response;
 }
 
 /**
@@ -182,8 +282,18 @@ uint24 stopMove(struct StopMovePayload* payload){
 *	Description:
 *	...
 **/
-uint24 getAbsPos(struct GetAbsPosPayload* payload){
-	return 0;
+rspstruct getAbsPos(struct GetAbsPosPayload* payload){
+	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
+
+	if (iMotNr < SPI_MOTORS){
+		response.ack = 1;
+		*(uint24*)&response.payload0 = L6470_getParam(iMotNr, ABS_POS);
+		return response;
+	}
+
+	response.payload0 = err_InvAddress;
+	return response;
 }
 
 /**
@@ -194,8 +304,10 @@ uint24 getAbsPos(struct GetAbsPosPayload* payload){
 *	Description:
 *	...
 **/
-uint24 setPin(struct SetPinPayload* payload){
-	return 0;
+rspstruct setPin(struct SetPinPayload* payload){
+	initResp(&response);
+	response.ack = 1;
+	return response;
 }
 
 /**
@@ -206,8 +318,10 @@ uint24 setPin(struct SetPinPayload* payload){
 *	Description:
 *	...
 **/
-uint24 getPin(struct GetPinPayload* payload){
-	return 0;
+rspstruct getPin(struct GetPinPayload* payload){
+	initResp(&response);
+	response.ack = 1;
+	return response;
 }
 
 /**
@@ -218,8 +332,10 @@ uint24 getPin(struct GetPinPayload* payload){
 *	Description:
 *	...
 **/
-uint24 configPin(struct ConfigPinPayload* payload){
-	return 0;
+rspstruct configPin(struct ConfigPinPayload* payload){
+	initResp(&response);
+	response.ack = 1;
+	return response;
 }
 
 /**
@@ -230,8 +346,19 @@ uint24 configPin(struct ConfigPinPayload* payload){
 *	Description:
 *	...
 **/
-uint24 saveHome(struct SaveHomePayload* payload){
-	return 0;
+rspstruct saveHome(struct SaveHomePayload* payload){
+	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
+
+	if (iMotNr < SPI_MOTORS){
+		L6470_resetPos(iMotNr);
+
+		response.ack = 1;
+		return response;
+	}
+
+	response.payload0 = err_InvAddress;
+	return response;
 }
 
 /**
@@ -242,8 +369,19 @@ uint24 saveHome(struct SaveHomePayload* payload){
 *	Description:
 *	...
 **/
-uint24 goHome(struct GoHomePayload* payload){
-	return 0;
+rspstruct goHome(struct GoHomePayload* payload){
+	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
+
+	if (iMotNr < SPI_MOTORS){
+		L6470_goHome(iMotNr);
+
+		response.ack = 1;
+		return response;
+	}
+
+	response.payload0 = err_InvAddress;
+	return response;
 }
 
 /**
@@ -254,8 +392,26 @@ uint24 goHome(struct GoHomePayload* payload){
 *	Description:
 *	...
 **/
-uint24 saveWayPoint(struct SaveWayPointPayload* payload){
-	return 0;
+rspstruct saveWayPoint(struct SaveWayPointPayload* payload){
+	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
+
+	if (iMotNr < SPI_MOTORS){
+
+		if (cntrWayPoint[iMotNr] >= NUMBER_WAYPOINTS){
+			response.payload0 = err_fWayPointBuf;
+			return response;
+		}
+
+		wayPoint[iMotNr][cntrWayPoint[iMotNr]++] = L6470_getParam(iMotNr, ABS_POS);
+
+		response.payload0 = (cntrWayPoint[iMotNr] - 1);
+		response.ack = 1;
+		return response;
+	}
+
+	response.payload0 = err_InvAddress;
+	return response;
 }
 
 /**
@@ -266,8 +422,35 @@ uint24 saveWayPoint(struct SaveWayPointPayload* payload){
 *	Description:
 *	...
 **/
-uint24 moveToWayPoint(struct MoveToWayPointPayload* payload){
-	return 0;
+rspstruct moveToWayPoint(struct MoveToWayPointPayload* payload){
+	uint8 iMotNr = (*payload).motor;
+	initResp(&response);
+
+	if (iMotNr < SPI_MOTORS){
+		if (cntrWayPoint[iMotNr] >= (*payload).wayPoint){
+			response.payload0 = err_InvWayPoint;
+			return response;
+		}
+		if (L6470_checkStartConditions(iMotNr) == 0){
+			response.payload0 = err_MotornRdy;
+			return response;
+		}
+
+		if ((*payload).acc != 0)
+			L6470_setParam(iMotNr, ACC, L6470_accCalc((*payload).acc));
+		if ((*payload).dec != 0)
+			L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload).dec));
+		if ((*payload).speed != 0)
+			L6470_setParam(iMotNr, MAX_SPEED, L6470_maxSpeedCalc((*payload).speed));
+
+		L6470_goTo(iMotNr, wayPoint[iMotNr][(*payload).wayPoint]);
+
+		response.ack = 1;
+		return response;
+	}
+
+	response.payload0 = err_InvAddress;
+	return response;
 }
 
 /**
@@ -278,7 +461,8 @@ uint24 moveToWayPoint(struct MoveToWayPointPayload* payload){
 *	Description:
 *	...
 **/
-uint24 dcMove(struct DcMovePayload* payload){
+rspstruct dcMove(struct DcMovePayload* payload){
+	initResp(&response);
 	if(DC_MOTORS){
 		if((*payload).dir){
 			DC_FW = 0;
@@ -290,7 +474,10 @@ uint24 dcMove(struct DcMovePayload* payload){
 		
 		for(uint16 i = 0; i < (*payload).time; i++){
 			for(int j = 0; j < 7; j++){
-				_delay3(4);
+				asm("NOP");
+				asm("NOP");
+				asm("NOP");
+				asm("NOP");
 			}
 				
 		}
@@ -303,7 +490,8 @@ uint24 dcMove(struct DcMovePayload* payload){
 			DC_RW = 0;
 		}
 	}
-	return 0;
+	response.ack = 1;
+	return response;
 }
 
 /**

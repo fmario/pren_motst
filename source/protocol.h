@@ -15,21 +15,30 @@
 /**------------------ PROTOTYPES ------------------**/
 void* parseCommand(void);
 
-uint24 initMove(struct InitMovePayload* payload);
-uint24 moveTo(struct MoveToPayload* payload);
-uint24 waitMoved(struct WaitMovedPayload* payload);
-uint24 isReady(struct IsReadyPayload* payload);
-uint24 move(struct MovePayload* payload);
-uint24 stopMove(struct StopMovePayload* payload);
-uint24 getAbsPos(struct GetAbsPosPayload* payload);
-uint24 setPin(struct SetPinPayload* payload);
-uint24 getPin(struct GetPinPayload* payload);
-uint24 configPin(struct ConfigPinPayload* payload);
-uint24 saveHome(struct SaveHomePayload* payload);
-uint24 goHome(struct GoHomePayload* payload);
-uint24 saveWayPoint(struct SaveWayPointPayload* payload);
-uint24 moveToWayPoint(struct MoveToWayPointPayload* payload);
-uint24 dcMove(struct DcMovePayload* payload);
+typedef struct __rp{
+	uint8 ack;
+	uint8 payload0;
+	uint8 payload1;
+	uint8 payload2;
+} rspstruct;
+
+void initResp(rspstruct*);
+
+rspstruct initMove(struct InitMovePayload* payload);
+rspstruct moveTo(struct MoveToPayload* payload);
+rspstruct waitMoved(struct WaitMovedPayload* payload);
+rspstruct isReady(struct IsReadyPayload* payload);
+rspstruct move(struct MovePayload* payload);
+rspstruct stopMove(struct StopMovePayload* payload);
+rspstruct getAbsPos(struct GetAbsPosPayload* payload);
+rspstruct setPin(struct SetPinPayload* payload);
+rspstruct getPin(struct GetPinPayload* payload);
+rspstruct configPin(struct ConfigPinPayload* payload);
+rspstruct saveHome(struct SaveHomePayload* payload);
+rspstruct goHome(struct GoHomePayload* payload);
+rspstruct saveWayPoint(struct SaveWayPointPayload* payload);
+rspstruct moveToWayPoint(struct MoveToWayPointPayload* payload);
+rspstruct dcMove(struct DcMovePayload* payload);
 
 uint8 getChecksum(uint8* data, uint8 length);
 
@@ -39,13 +48,19 @@ uint24 swap24(uint24 val);
 /**----------------- VARIABLE ------------------**/
 
 //Error codes
-extern uint8 err_fBuffer[];
-extern uint8 err_InvCommand[];
-extern uint8 err_InvParam[];
+extern const uint8 err_fBuffer;
+extern const uint8 err_InvCommand;
+extern const uint8 err_InvAddress;
+extern const uint8 err_MotornRdy;
+extern const uint8 err_MotorErr;
+extern const uint8 err_fWayPointBuf;
+extern const uint8 err_InvWayPoint;
 
 /**------------------ DEFINES ------------------**/
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
+
+#define NUMBER_WAYPOINTS 15
 
 /**--------------------------------
 * --------- UART Protocol ---------
@@ -147,8 +162,9 @@ struct SaveWayPointPayload{
 struct MoveToWayPointPayload{
 	uint8 motor;
 	uint8 wayPoint;
+	uint8 speed;
 	uint8 acc;
-	uint8 dcc;
+	uint8 dec;
 };
 
 struct DcMovePayload{
@@ -156,14 +172,5 @@ struct DcMovePayload{
 	uint16 time;
 	uint8 goHiZ;
 };
-
-struct AnswerStructure{
-	uint8 ack;
-	uint24 payload;
-};
-
-/**--------------------------------
-* --------- SPI Protocol ----------
-* -------------------------------*/
 
 #endif  // !PROTOCOL_H

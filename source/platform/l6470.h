@@ -12,9 +12,12 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
+/**------------------- CONSTANTS ------------------**/
+#define NUMBER_PARAM 25
+
 /**------------------ PROTOTYPES ------------------**/
 void L6470_setParam(uint8 address, uint8 param, uint24 value);
-uint24	L6470_getParam(uint8 address, uint param);
+uint24	L6470_getParam(uint8 address, uint8 param);
 void L6470_run(uint8 address, uint8 dir, uint24 spd);
 void L6470_stepClock(uint8 address, uint8 dir);
 void L6470_move(uint8 address, uint8 dir, uint24 n_step);
@@ -31,12 +34,40 @@ void L6470_hardStop(uint8 address);
 void L6470_softHiZ(uint8 address);
 void L6470_hardHiZ(uint8 address);
 uint16 L6470_getStatus(uint8 address);
+
+uint8 L6470_isMoving(uint8 address);
+uint8 L6470_checkStartConditions(uint8 address);
+uint8 L6470_parseParamSend(uint8 param, uint24* value);
+uint8 L6470_parseParamReceived(uint8 param, uint24* value);
+uint24 L6470_speedCalc(uint8 stepsPerSec);
+uint24 L6470_maxSpeedCalc(uint8 stepsPerSec);
+uint24 L6470_accCalc(uint8 stepsPerSecSqrt);
+
+typedef struct _st{
+	uint8 HiZ : 1;
+	uint8 BUSY : 1;
+	uint8 SW_F : 1;
+	uint8 SW_EVN : 1;
+	uint8 DIR : 1;
+	uint8 MOT_STATUS : 2;
+	uint8 NOTPERF_CMD : 1;
+	uint8 WRONG_CMD : 1;
+	uint8 UVLO : 1;
+	uint8 TH_WRN : 1;
+	uint8 TH_SD : 1;
+	uint8 OCD : 1;
+	uint8 STEP_LOSS_A : 1;
+	uint8 STEP_LOSS_B : 1;
+	uint8 SCK_MOD : 1;
+}L6470_status;
+
+L6470_status L6470_ParseStatus(uint16 u16_state);
+
 /**------------------ DEFINES ------------------**/
 #ifndef L6470_H
 #define L6470_H
 
 // Register address redefines.
-//  See the Param_Handler() function for more info about these.
 #define ABS_POS              0x01
 #define EL_POS               0x02
 #define MARK                 0x03
@@ -63,8 +94,8 @@ uint16 L6470_getStatus(uint8 address);
 #define CONFIG               0x18
 #define STATUS               0x19
 
-//dSPIN commands
-#define NOP                  0x00
+//L6470 commands
+#define NOPP                 0x00
 #define SET_PARAM            0x00
 #define GET_PARAM            0x20
 #define RUN                  0x50

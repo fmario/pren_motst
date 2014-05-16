@@ -12,8 +12,8 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef DEFINITIONS_H
+#define DEFINITIONS_H
 
 /**------------------ CONFIGURATION -----------------**/
 #pragma config OSC = HS		
@@ -58,4 +58,4 @@ extern uint8 _received_Data[COMMAND_LENGTH];
 extern uint8 _payload[COMMAND_LENGTH - 1];
 
 
-#endif  // !MAIN_H
+#endif  // !DEFINITIONS_H

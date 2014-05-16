@@ -12,7 +12,7 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
-#include "platform/definitions.h"
+#include "platform\definitions.h"
 
 #include "queue.h"
 #include "platform\uart.h"

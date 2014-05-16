@@ -12,24 +12,24 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
-#include "platform/definitions.h"
+#include "platform\definitions.h"
 
 #include "main.h"
 
 #include "protocol.h"
 #include "queue.h"
-#include "platform/interrupt.h"
-#include "platform/uart.h"
-#include "platform/spi.h"
-#include "platform/port.h"
+#include "platform\interrupt.h"
+#include "platform\uart.h"
+#include "platform\spi.h"
+#include "platform\port.h"
 
 /**-------------- EXTERN VARIABLES ---------------**/
 uint8 _received_Data[COMMAND_LENGTH];
 uint8 _payload[COMMAND_LENGTH - 1];
 
 /**------------------ VARIABLES ------------------**/
-uint24(*commandptr)(uint8[]);
-struct AnswerStructure response;
+rspstruct(*commandptr)(uint8[]);
+rspstruct response;
 /**------------------ FUNCTIONS ------------------**/
 
 /**
@@ -53,16 +53,13 @@ int main(void){
 			commandptr = (uint24*)parseCommand();
 
 			if (commandptr != 0){
-				response.payload = commandptr(_payload);
-				response.ack = 1;
-
-				if(response.payload != NULL)
-					uart_send_Array(ANSWER_LENGTH, (uint8*)&response);
-				else
-					uart_send_Array(ANSWER_LENGTH, err_InvParam);
+				response = commandptr(_payload);
+				uart_send_Array(ANSWER_LENGTH, (uint8*)&response);
 			}
 			else{
-				uart_send_Array(ANSWER_LENGTH, err_InvCommand);
+				initResp(&response);
+				response.payload0 = err_InvCommand;
+				uart_send_Array(ANSWER_LENGTH, (uint8*)&response);
 			}
 		}
 	}
