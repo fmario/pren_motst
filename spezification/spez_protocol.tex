@@ -65,8 +65,8 @@ TRUE := 0x01..0xFF\\
 \begin{tabular}{|p{1.5cm}|p{2.2cm}|p{3.2cm}|p{2cm}|}
 	\hline 
 	Ack \mbox{(1 Byte)} &
-	Payload \mbox{(0..\BL Bytes)} & 
-	Padding \mbox{(\BL Bytes - Length)} & 
+	Payload \mbox{(0..3 Bytes)} & 
+	Padding \mbox{(3 Bytes - Length)} & 
 	\textit{Checksum \mbox{(1 Byte)}} \\
 	\hline 
 \end{tabular}  
@@ -86,7 +86,7 @@ TRUE := 0x01..0xFF\\
 	\hline
 	\multirow{2}{2cm}{Command mnemonic} & \multicolumn{9}{c|}{Command Bytes (Payload)} \\\cline{2-10} 
 		&  Byte 0 & Byte 1 & Byte 2 & Byte 3 & Byte 4 & Byte 5 & Byte 6 & Byte 7 & Byte 8\\ \hline
-	InitMove	& \IMV	& Motor	& Dir & & & & & & \\\hline
+	InitMove	& \IMV	& Motor	& Dir & Speed & Acc & Dec & & & \\\hline
 	MoveTo		& \MTO	& Motor	& Dir & AbsPos (HB) & AbsPos & AbsPos (LB) & Speed & Acc & Dec \\\hline
 	WaitMoved	& \WTM	& Motor	& Timeout (HB) & Timeout (LB)& & & & & \\\hline
 	IsReady	& \IRD	& Motor	& & & & & & & \\\hline
@@ -120,6 +120,9 @@ Command code: \textbf{\IMV}\\\\
 	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
 	Byte 1 &  \multicolumn{8}{c|}{MOTOR}  \\ \hline
 	Byte 2 &  \multicolumn{8}{c|}{DIR}  \\ \hline
+	Byte 3 &  \multicolumn{8}{c|}{SPEED}  \\ \hline
+	Byte 4 &  \multicolumn{8}{c|}{ACC}  \\ \hline
+	Byte 5 &  \multicolumn{8}{c|}{DEC}  \\ \hline
 \end{tabular}
 \paragraph*{Description\\}
 Der gewählte MOTOR fährt zur Initialisierung in der angegebenen Richtung (DIR) bis an eine Endposition (zB. mechanischer Anschlag).
@@ -312,7 +315,7 @@ Errorcodes werden mit der Response Structure gesendet.
 Das Acknowledge Byte ist auf den Wert 0x00 und das erste Byte beinhaltet den Error-Code.\\\\
 \begin{tabular}{|p{1.2cm}|p{2cm}|p{4cm}|p{2cm}|}
 	\hline
- 		Ack & Byte 0 & Byte 1 - Byte 9 & \textit{Checksum}\\\hline
+ 		Ack & Byte 0 & Byte 1 - Byte 2 & \textit{Checksum}\\\hline
 	 	0x00 & Error code & Padding (0x00) & \\ \hline
 \end{tabular}\\\\
 
@@ -325,6 +328,35 @@ Der Prozessor hat noch nicht alle Befehle abgearbeitet. Der Befehls-Buffer ist v
 
 Error code: \textbf{0xE1}
 \paragraph*{Description\\}
-Es wurde ein invalider Befehl geschickt.
+Es wurde ein ungültiger Befehl geschickt, welche nicht verarbeitet werden kann.
 
+\subsection{Invalide Address}
+
+Error code: \textbf{0xE2}
+\paragraph*{Description\\}
+Die Motorennummer ist ungültig.
+
+\subsection{Motor not ready}
+
+Error code: \textbf{0xE3}
+\paragraph*{Description\\}
+Der Motor ist noch nicht bereit (Befindet sich noch in Bewegung).
+
+\subsection{Motor Error}
+
+Error code: \textbf{0xE4}
+\paragraph*{Description\\}
+Der Motor hat einen Error.
+
+\subsection{Full Way Point Buffer}
+
+Error code: \textbf{0xE5}
+\paragraph*{Description\\}
+Die maximale Anzahl Way Points für diesen Motor sind erreicht.
+
+\subsection{Invalid Way Point}
+
+Error code: \textbf{0xE5}
+\paragraph*{Description\\}
+Der angegebene Way Point existiert nicht.
 \end{document}
