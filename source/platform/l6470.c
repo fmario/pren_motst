@@ -325,7 +325,7 @@ void L6470_hardHiZ(uint8 address){
 *	Gibt den Status zurück
 **/
 uint16 L6470_getStatus(uint8 address){
-	uint8 cmd = GET_PARAM;
+	uint8 cmd = GET_STATUS;
 	cCommand[0] = cmd;
 	
 	spi_send_Command(address, 1, cCommand, 2, cResponse);
