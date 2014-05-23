@@ -64,7 +64,7 @@ void L6470_setParam(uint8 address, uint8 param, uint24 value){
 	uint8 cmd = SET_PARAM;
 	uint8 bytes = L6470_parseParamSend(param, &value); 
 	
-	cCommand[0] = cmd & param;
+	cCommand[0] = cmd | param;
 	*(uint24*)&cCommand[1] = value;
 	
 	spi_send_Command(address, (bytes + 1), cCommand, 0, 0);
@@ -80,9 +80,9 @@ void L6470_setParam(uint8 address, uint8 param, uint24 value){
 **/
 uint24	L6470_getParam(uint8 address, uint8 param){
 	uint8 cmd = GET_PARAM;
-	cCommand[0] = cmd & param;
+	cCommand[0] = cmd | param;
 	
-	spi_send_Command(address, 1, cCommand, 3, cResponse);	
+	spi_send_Command(address, 1, cCommand, 3, &cResponse);	
 	L6470_parseParamReceived(param, &cResponse);
 
 	return *(uint24*)cResponse;
@@ -99,7 +99,7 @@ uint24	L6470_getParam(uint8 address, uint8 param){
 **/
 void L6470_run(uint8 address, uint8 dir, uint24 spd){
 	uint8 cmd = RUN;
-	cCommand[0] = cmd & dir;
+	cCommand[0] = cmd | dir;
 	*(uint24*)&cCommand[1] = spd;
 	
 	spi_send_Command(address, 4, cCommand, 0, 0);
@@ -115,7 +115,7 @@ void L6470_run(uint8 address, uint8 dir, uint24 spd){
 **/
 void L6470_stepClock(uint8 address, uint8 dir){
 	uint8 cmd = STEP_CLOCK;
-	cCommand[0] = cmd & dir;
+	cCommand[0] = cmd | dir;
 	
 	spi_send_Command(address, 1, cCommand, 0, 0);
 }
@@ -131,7 +131,7 @@ void L6470_stepClock(uint8 address, uint8 dir){
 **/
 void L6470_move(uint8 address, uint8 dir, uint24 n_step){
 	uint8 cmd = MOVE;
-	cCommand[0] = cmd & dir;
+	cCommand[0] = cmd | dir;
 	*(uint24*)&cCommand[1] = n_step;
 	
 	spi_send_Command(address, 4, cCommand, 0, 0);
@@ -164,7 +164,7 @@ void L6470_goTo(uint8 address, uint24 abs_pos){
 **/
 void L6470_goTo_Dir(uint8 address, uint8 dir, uint24 abs_pos){
 	uint8 cmd = GOTO_DIR;
-	cCommand[0] = cmd & dir;
+	cCommand[0] = cmd | dir;
 	*(uint24*)&cCommand[1] = abs_pos;
 	
 	spi_send_Command(address, 4, cCommand, 0, 0);
@@ -182,7 +182,7 @@ void L6470_goTo_Dir(uint8 address, uint8 dir, uint24 abs_pos){
 **/
 void L6470_goUntil(uint8 address, uint8 act, uint8 dir, uint24 spd){
 	uint8 cmd = GO_UNTIL;
-	cCommand[0] = cmd & dir & (act<<3);
+	cCommand[0] = cmd | dir | (act<<3);
 	*(uint24*)&cCommand[1] = spd;
 	
 	spi_send_Command(address, 4, cCommand, 0, 0);
@@ -199,7 +199,7 @@ void L6470_goUntil(uint8 address, uint8 act, uint8 dir, uint24 spd){
 **/
 void L6470_releaseSW(uint8 address, uint8 act, uint8 dir){
 	uint8 cmd = RELEASE_SW;
-	cCommand[0] = cmd & dir & (act<<3);
+	cCommand[0] = cmd | dir | (act<<3);
 		
 	spi_send_Command(address, 1, cCommand, 0, 0);
 }
@@ -328,7 +328,7 @@ uint16 L6470_getStatus(uint8 address){
 	uint8 cmd = GET_STATUS;
 	cCommand[0] = cmd;
 	
-	spi_send_Command(address, 1, cCommand, 2, cResponse);
+	spi_send_Command(address, 1, cCommand, 2, &cResponse);
 	
 	return swap16(*(uint16*)cResponse);
 }

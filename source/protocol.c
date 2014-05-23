@@ -205,7 +205,7 @@ rspstruct isReady(struct IsReadyPayload* payload){
 	initResp(&response);
 
 	if (iMotNr < SPI_MOTORS){
-		response.payload0 = L6470_isMoving(iMotNr) ? 1 : 0;
+		response.payload0 = L6470_isMoving(iMotNr) ? 0 : 1;
 		response.ack = 1;
 		return response;
 	}

@@ -29,4 +29,8 @@
 void init_port(void){
 	TRISC1 = OUTPUT;
 	TRISC2 = OUTPUT;
+	
+	TRISE0 = OUTPUT;
+	TRISE1 = OUTPUT;
+	TRISE2 = OUTPUT;
 }

@@ -101,6 +101,7 @@ void spi_send_Command(uint8 iAddress, uint8 iCmdLength, uint8* cCmdArray, uint8 
 		set_CS(iAddress);
 		spi_send_Byte(SPI_NOP);
 		*(cRspBuffer + i) = spi_receive_Byte();
+		reset_CS();
 	}
 }
 
@@ -114,7 +115,7 @@ void spi_send_Command(uint8 iAddress, uint8 iCmdLength, uint8* cCmdArray, uint8 
 *	Devices.
 **/
 void set_CS(uint8 iAddress){
-	PORTE_IO.nCS = 1 << iAddress;
+	PORTE_IO.nCS = !(uint8)(1 << iAddress);
 	_delay(0x02);	//wait 400ns (t_setCS > 350ns)
 }
 
@@ -128,6 +129,6 @@ void set_CS(uint8 iAddress){
 *	entsprechende Zeit.
 **/
 void reset_CS(void){
-	PORTE_IO.nCS = 0;
+	PORTE_IO.nCS = 3;
 	_delay(0x05);	//wait 1us (t_disCS > 800ns)
 }
