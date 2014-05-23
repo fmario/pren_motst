@@ -23,6 +23,8 @@
 #include "uart.h"
 #include "spi.h"
 
+rspstruct full_Buf;
+uint8 cError = 0;
 
 /**
 *	Function:	enable_interrupt
@@ -49,7 +51,13 @@ void enable_interrupt(void){
 void interrupt handler(void){
 	/* UART Receive Interrupt */
 	if(RCIF){
-		if(!write_Queue(uart_receive_Byte()))
-			uart_send_Array(ANSWER_LENGTH, err_fBuffer);
+		if (!write_Queue(uart_receive_Byte())){
+			if (++cError == COMMAND_LENGTH){
+				cError = 0;
+				initResp(&full_Buf);
+				full_Buf.payload0 = err_fBuffer;
+				uart_send_Array(ANSWER_LENGTH, (uint8*)&full_Buf);
+			}
+		}
 	}
 }
