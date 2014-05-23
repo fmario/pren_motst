@@ -29,6 +29,7 @@
 \newcommand{\STP}{0x07}
 \newcommand{\GTP}{0x08}
 \newcommand{\CNP}{0x09}
+\newcommand{\DCM}{0x0E}
 
 \newcommand{\SVH}{0x0A}
 \newcommand{\GOH}{0x0B}
@@ -96,6 +97,7 @@ TRUE := 0x01..0xFF\\
 	SetPin	& \STP	& PinNr	& IsHigh & & & & & & \\\hline
 	GetPin	& \GTP	& PinNr	& & & & & & & \\\hline
 	ConfigPin& \CNP& PinNr	& IsOutput & & & & & & \\\hline	
+	DcMove	& \DCM & Dir & Time (HB) & Time (LB) & goHiz & & & & \\\hline
 \end{tabular}
 \\\\
 
@@ -251,10 +253,27 @@ Command code: \textbf{\CNP}\\\\
  		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
 	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
 	Byte 1 &  \multicolumn{8}{c|}{PIN\_NR}  \\ \hline
-	Byte  &  \multicolumn{8}{c|}{IS\_OUTPUT}  \\ \hline
+	Byte 2 &  \multicolumn{8}{c|}{IS\_OUTPUT}  \\ \hline
 \end{tabular}
 \paragraph*{Description\\}
 Der gewählte IO-Pin (PIN\_NR) des $\mu$Cs wird anhand des zweiten Parameters (IS\_OUTPUT) konfiguriert. Der Pin wird zum Output, wenn IS\_OUPUT = TRUE ist, andernfalls zum Input.\\
+
+\subsection{DcMove (DIR, TIME, GO\_HiZ)}
+Command code: \textbf{\DCM}\\\\
+\newcolumntype{C}{>{\centering\arraybackslash}p{0.8cm}}
+\begin{tabular}{|p{1.2cm}|C|C|C|C|C|C|C|C|}
+	\hline
+ 		& Bit 7 & Bit 6 & Bit 5 & Bit 4 & Bit 3 & Bit 2 & Bit 1 & Bit 0 \\\hline
+	Byte 0 &  &  &  &  &  &  &  &  \\ \hline
+	Byte 1 &  \multicolumn{8}{c|}{DIR}  \\ \hline
+	Byte 2 &  \multicolumn{8}{c|}{TIME (HB)}  \\ \hline
+	Byte 3 &  \multicolumn{8}{c|}{TIME (LB)}  \\ \hline
+	Byte 4 &  \multicolumn{8}{c|}{GO\_HiZ}  \\ \hline
+\end{tabular}
+\paragraph*{Description\\}
+Der DC-Motor fährt die angegebene Zeit (TIME in $ms$) in die Richtung DIR.
+Wenn GO\_HiZ auf TRUE ist, wird der Motor nach dem Fahren so geschaltet,
+dass dieser ein Haltemoment hat.\\
 
 \subsection{SaveHome (MOTOR)}
 Command code: \textbf{\SVH}\\\\
@@ -356,7 +375,14 @@ Die maximale Anzahl Way Points für diesen Motor sind erreicht.
 
 \subsection{Invalid Way Point}
 
-Error code: \textbf{0xE5}
+Error code: \textbf{0xE6}
 \paragraph*{Description\\}
 Der angegebene Way Point existiert nicht.
+\end{document}
+
+\subsection{Wrong Pin Number}
+
+Error code: \textbf{0xE7}
+\paragraph*{Description\\}
+Der angegebene Pin kann nicht bearbeitet werden.
 \end{document}
