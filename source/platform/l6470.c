@@ -23,7 +23,8 @@
 /**------------------ VARIABLES ------------------**/
 uint8 cCommand[4];
 uint8 cResponse[3];
-uint8 bit_len[NUMBER_PARAM] = { 22,	// ABS_POS
+uint8 bit_len[NUMBER_PARAM + 1] = { 0,  // NOP
+								22,	// ABS_POS
 								9,	// EL_POS
 								22,	// MARK
 								20, // SPEED
@@ -83,7 +84,7 @@ uint24	L6470_getParam(uint8 address, uint8 param){
 	cCommand[0] = cmd | param;
 	
 	spi_send_Command(address, 1, cCommand, 3, &cResponse);	
-	L6470_parseParamReceived(param, &cResponse);
+	//L6470_parseParamReceived(param, &cResponse);
 
 	return *(uint24*)cResponse;
 }
