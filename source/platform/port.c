@@ -114,8 +114,13 @@ uint8 port_setPin(uint8 pinNr, uint8 isHigh){
 **/
 uint8 port_getPin(uint8 pinNr){
 	if (pinNr < GPIO){
+		volatile uint8* tris = gpio_addr[pinNr] + TRIS_OFF;
 		volatile uint8* port = gpio_addr[pinNr];
 		uint8 mask = 1 << gpio_offs[pinNr];
+
+		if ((*tris & mask) == OUTPUT)
+			port += LAT_OFF;
+		
 		return (*port & mask) >> gpio_offs[pinNr];
 	}
 

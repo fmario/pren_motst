@@ -42,11 +42,11 @@ volatile unsigned char gpio_offs[GPIO] = {	0,
 											5,
 											0,
 											1,
-											2,
-											3,
-											4,
+											7,
+											6,
 											5,
-											6 };
+											4,
+											3 };
 /**
 *	Function:	init_motors
 *	Parameter:	void
@@ -125,7 +125,7 @@ void init_motors(void){
 	***************************/
 	TRISB0 = OUTPUT;	//Direction
 	TRISC2 = OUTPUT;	//Step Clock
-	TRISD7 = OUTPUT;	//Holding
+	TRISD2 = OUTPUT;	//Holding
 	M4_Hold = 1;		//IsHolding
 
 	/**************************
