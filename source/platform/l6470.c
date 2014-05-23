@@ -23,7 +23,7 @@
 /**------------------ VARIABLES ------------------**/
 uint8 cCommand[4];
 uint8 cResponse[3];
-uint8 bit_len[NUMBER_PARAM + 1] = { 0,  // NOP
+uint8 bit_len[NUMBER_PARAM + 1] = { 0,  //
 								22,	// ABS_POS
 								9,	// EL_POS
 								22,	// MARK
@@ -84,7 +84,7 @@ uint24	L6470_getParam(uint8 address, uint8 param){
 	cCommand[0] = cmd | param;
 	
 	spi_send_Command(address, 1, cCommand, 3, &cResponse);	
-	//L6470_parseParamReceived(param, &cResponse);
+	L6470_parseParamReceived(param, &cResponse);
 
 	return *(uint24*)cResponse;
 }
@@ -405,7 +405,7 @@ uint8 L6470_parseParamReceived(uint8 param, uint24* value){
 	if (cBit_len % 8 > 0)
 		cByte_len++;
 
-	*value = (*value) >> (24 - cBit_len);
+	*value = (*value) >> ((3 - cByte_len) * 8);
 
 	return cByte_len;
 }
@@ -466,7 +466,7 @@ uint24 L6470_speedCalc(uint8 stepsPerSec){
 *	Description:
 *	Rechnet von Step/s in Step/tick um für das Register
 *	MAX_SPEED. Die Formel für die Umrechnung ist 
-*	im Datenplatt gegeben mit:
+*	im Datenblatt gegeben mit:
 *	([(steps/s)*(tick)]/(2^-18))
 *	Ein Tick ist angegeben mit 250ns und die Registergrösse
 *	ist 10-bit
@@ -484,7 +484,7 @@ uint24 L6470_maxSpeedCalc(uint8 stepsPerSec){
 *
 *	Description:
 *	Rechnet von Step/s^2 in Step/tick^2 um.
-*	Die Formel für die Umrechnung ist im Datenplatt
+*	Die Formel für die Umrechnung ist im Datenblatt
 *	gegeben mit:
 *	([(steps/s^2)*(tick^2)]/(2^-40))
 *	Ein Tick ist angegeben mit 250ns und die Registergrösse
