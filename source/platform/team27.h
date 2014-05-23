@@ -13,6 +13,9 @@
 **/
 
 
+/**------------------ PROTOTYPES ------------------**/
+void init_motors(void);
+
 /**------------------ DEFINES ------------------**/
 #ifndef TEAM27_H
 #define TEAM27_H
@@ -25,6 +28,12 @@
 
 // Anzahl DC Motors
 #define DC_MOTORS 1
+
+// Anzahl GPIO's
+#define GPIO 13
+
+extern volatile unsigned char* gpio_addr[GPIO];
+extern volatile unsigned char gpio_offs[GPIO];
 
 // Register: PORTA
 extern volatile unsigned char           PRT_A               @ 0xF80;
@@ -42,6 +51,8 @@ extern volatile union {
     };
 } PORTA_IO @ 0xF80;
 
+// Register: TRISA
+extern volatile unsigned char           TRS_A               @ 0xF92;
 
 // Register: PORTB
 extern volatile unsigned char           PRT_B               @ 0xF81;
@@ -87,9 +98,12 @@ extern volatile union {
         unsigned IO10					:1;
         unsigned IO11					:1;
         unsigned IO12					:1;
-        unsigned IO13					:1;
+        unsigned M4_Hold				:1;
     };
 } PORTD_IO @ 0xF83;
+
+// Register: TRISD
+extern volatile unsigned char           TRS_D               @ 0xF95;
 
 // Register: PORTE
 extern volatile unsigned char           PRT_E               @ 0xF84;
@@ -123,7 +137,7 @@ extern volatile bit                     IO9                 @ (((unsigned) &PRT_
 extern volatile bit                     IO10                @ (((unsigned) &PRT_D)*8) + 4;
 extern volatile bit                     IO11                @ (((unsigned) &PRT_D)*8) + 5;
 extern volatile bit                     IO12                @ (((unsigned) &PRT_D)*8) + 6;
-extern volatile bit                     IO13                @ (((unsigned) &PRT_D)*8) + 7;
+extern volatile bit                     M4_Hold             @ (((unsigned)&PRT_D) * 8) + 7;
 
 extern volatile bit                     M4_DIR              @ (((unsigned) &PRT_B)*8) + 0;
 extern volatile bit                     nBusy3              @ (((unsigned) &PRT_B)*8) + 2;

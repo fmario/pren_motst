@@ -84,7 +84,7 @@ uint24	L6470_getParam(uint8 address, uint8 param){
 	cCommand[0] = cmd | param;
 	
 	spi_send_Command(address, 1, cCommand, 3, &cResponse);	
-	L6470_parseParamReceived(param, &cResponse);
+	L6470_parseParamReceived(param, (uint24*)&cResponse);
 
 	return *(uint24*)cResponse;
 }

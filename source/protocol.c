@@ -16,6 +16,7 @@
 
 #include "protocol.h"
 #include "platform\team.h"
+#include "platform\port.h"
 
 #include "platform\L6470.h"
 
@@ -48,6 +49,7 @@ const uint8 err_MotornRdy = 0xE3;
 const uint8 err_MotorErr = 0xE4;
 const uint8 err_fWayPointBuf = 0xE5;
 const uint8 err_InvWayPoint = 0xE6;
+const uint8 err_WrongPin = 0xE7;
 
 /**------------------ VARIABLES ------------------**/
 uint24 wayPoint[SPI_MOTORS][NUMBER_WAYPOINTS];
@@ -306,7 +308,13 @@ rspstruct getAbsPos(struct GetAbsPosPayload* payload){
 **/
 rspstruct setPin(struct SetPinPayload* payload){
 	initResp(&response);
-	response.ack = 1;
+
+	if (port_setPin((*payload).pinNr, (*payload).isHigh) == 1){
+		response.ack = 1;
+		return response;
+	}
+
+	response.payload0 = err_WrongPin;
 	return response;
 }
 
@@ -320,7 +328,15 @@ rspstruct setPin(struct SetPinPayload* payload){
 **/
 rspstruct getPin(struct GetPinPayload* payload){
 	initResp(&response);
-	response.ack = 1;
+
+	uint8 state = port_getPin((*payload).pinNr);
+	if (state != 0xFF){
+		response.ack = 1;
+		response.payload0 = state;
+		return response;
+	}
+
+	response.payload0 = err_WrongPin;
 	return response;
 }
 
@@ -334,7 +350,13 @@ rspstruct getPin(struct GetPinPayload* payload){
 **/
 rspstruct configPin(struct ConfigPinPayload* payload){
 	initResp(&response);
-	response.ack = 1;
+
+	if (port_configPin((*payload).pinNr, (*payload).isOutput) == 1){
+		response.ack = 1;
+		return response;
+	}
+
+	response.payload0 = err_WrongPin;
 	return response;
 }
 

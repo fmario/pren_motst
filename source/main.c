@@ -22,6 +22,7 @@
 #include "platform\uart.h"
 #include "platform\spi.h"
 #include "platform\port.h"
+#include "platform\team.h"
 
 /**-------------- EXTERN VARIABLES ---------------**/
 uint8 _received_Data[COMMAND_LENGTH];
@@ -45,12 +46,13 @@ int main(void){
 	init_port();
 	init_uart();
 	init_spi();
+	init_motors();
 	enable_interrupt();
 	reset_Queue();
 
 	for(;;){
 		if(read_Queue(&_received_Data)){
-			commandptr = (uint24*)parseCommand();
+			commandptr = parseCommand();
 
 			if (commandptr != 0){
 				response = commandptr(_payload);

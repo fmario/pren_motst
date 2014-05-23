@@ -55,6 +55,7 @@ extern const uint8 err_MotornRdy;
 extern const uint8 err_MotorErr;
 extern const uint8 err_fWayPointBuf;
 extern const uint8 err_InvWayPoint;
+extern const uint8 err_WrongPin;
 
 /**------------------ DEFINES ------------------**/
 #ifndef PROTOCOL_H
@@ -127,23 +128,18 @@ struct GetAbsPosResultPayload
 
 struct SetPinPayload
 {
-    uint8 motor;
+	uint8 pinNr;
     uint8 isHigh;
 };
 
 struct GetPinPayload
 {
-    uint8 motor;
-};
-
-struct GetPinResultPayload
-{
-    uint8 isHigh;
+    uint8 pinNr;
 };
 
 struct ConfigPinPayload
 {
-    uint8 motor;
+	uint8 pinNr;
     uint8 isOutput;
 };
 

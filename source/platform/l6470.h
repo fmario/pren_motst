@@ -115,4 +115,32 @@ L6470_status L6470_ParseStatus(uint16 u16_state);
 #define HARD_HIZ             0xA8
 #define GET_STATUS           0xD0
 
+// constant definitions for overcurrent thresholds
+#define OCD_TH_375mA 0x00
+#define OCD_TH_750mA 0x01
+#define OCD_TH_1125mA 0x02
+#define OCD_TH_1500mA 0x03
+#define OCD_TH_1875mA 0x04
+#define OCD_TH_2250mA 0x05
+#define OCD_TH_2625mA 0x06
+#define OCD_TH_3000mA 0x07
+#define OCD_TH_3375mA 0x08
+#define OCD_TH_3750mA 0x09
+#define OCD_TH_4125mA 0x0A
+#define OCD_TH_4500mA 0x0B
+#define OCD_TH_4875mA 0x0C
+#define OCD_TH_5250mA 0x0D
+#define OCD_TH_5625mA 0x0E
+#define OCD_TH_6000mA 0x0F
+
+// STEP_MODE option values.
+#define STEP_SEL_1 0x00
+#define STEP_SEL_1_2 0x01
+#define STEP_SEL_1_4 0x02
+#define STEP_SEL_1_8 0x03
+#define STEP_SEL_1_16 0x04
+#define STEP_SEL_1_32 0x05
+#define STEP_SEL_1_64 0x06
+#define STEP_SEL_1_128 0x07
+
 #endif  // !L6470_H
