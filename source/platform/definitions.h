@@ -24,7 +24,7 @@
 
 /**------------------- CONSTANTS -------------------**/
 //	Länge eines Befehls in Bytes
-#define COMMAND_LENGTH 10
+#define COMMAND_LENGTH 9
 
 //	Länge einer Antwort in Bytes 
 #define ANSWER_LENGTH 4
