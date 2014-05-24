@@ -239,7 +239,7 @@ rspstruct move(struct MovePayload* payload){
 		if ((*payload).dec != 0)
 			L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload).dec));
 
-		L6470_run(iMotNr, (*payload).direction, (*payload).speed);
+		L6470_run(iMotNr, (*payload).direction, L6470_speedCalc((*payload).speed));
 
 		response.ack = 1;
 		return response;
