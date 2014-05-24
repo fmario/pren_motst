@@ -110,7 +110,7 @@ TRUE := 0x01..0xFF\\
 	GoHome		& \GOH	& Motor	& & & & & & & \\\hline
 	Save \mbox{WayPoint}& \SWP	& Motor	& & & & & & & \\\hline
 	MoveTo WayPoint& \MWP& Motor	& WayPoint & Speed & Acc & Dec & & & \\\hline
-\end{tabular}
+\end{tabular}\\\\
 
 
 \subsection{InitMove (MOTOR, DIR)}
@@ -130,7 +130,7 @@ Command code: \textbf{\IMV}\\\\
 Der gewählte MOTOR fährt zur Initialisierung in der angegebenen Richtung (DIR) bis an eine Endposition (zB. mechanischer Anschlag).
 Sobald diese Position erreicht ist, bleibt der Motor stehen, setzt die absolute Position auf null und ist bereit. Die angegebene Geschwindigkeit kann folgendermassen umgerechnet werden:
 \[
-	\left[step/s\right] = SPEED \cdot 4096
+	\left[step/s\right] = \frac{SPEED \cdot 2^{-16}}{250ns}
 \]\\ 
 
 \subsection{MoveTo (MOTOR, DIR, ABS\_POS, SPEED, ACC, DEC)}
@@ -154,13 +154,13 @@ Der gewählt MOTOR fährt zu eine bestimmten absoluten Position (ABS\_POS). Dabe
 Falls Standardwerte für Geschwindigkeit, Beschleunigung und Verzögerung verwendet werden sollen, können die jeweiligen Parameter auf 0x00 gesetzt werden.\\
 Umrechnung der Geschwindigkeit:
 \[
-	\left[step/s\right] = SPEED \cdot 4
+	\left[step/s\right] = \frac{SPEED \cdot 2^{-16}}{250ns}
 \]\\
 Umrechnung der Beschleunigung:
 \[
 	\begin{aligned}
-		\left[step/s^2\right] &= ACC \cdot 16 \\
-		\left[step/s^2\right] &= DEC \cdot 16
+		\left[step/s^2\right] &= \frac{ACC \cdot 2^{-36}}{(250ns)^2} \\
+		\left[step/s^2\right] &= \frac{DEC \cdot 2^{-36}}{(250ns)^2}
 	\end{aligned}
 \]\\
 
@@ -208,13 +208,13 @@ Der gewählt MOTOR fährt mit der angegebenen Geschwindigkeit (SPEED) in die Ric
 Falls Standardwerte für Geschwindigkeit, Beschleunigung und Verzögerung verwendet werden sollen, können die jeweiligen Parameter auf 0x00 gesetzt werden.\\
 Umrechnung der Geschwindigkeit:
 \[
-	\left[step/s\right] = SPEED \cdot 4096
+	\left[step/s\right] = \frac{SPEED \cdot 2^{-16}}{250ns}
 \]\\
 Umrechnung der Beschleunigung:
 \[
 	\begin{aligned}
-		\left[step/s^2\right] &= ACC \cdot 16 \\
-		\left[step/s^2\right] &= DEC \cdot 16
+		\left[step/s^2\right] &= \frac{ACC \cdot 2^{-36}}{(250ns)^2} \\
+		\left[step/s^2\right] &= \frac{DEC \cdot 2^{-36}}{(250ns)^2}
 	\end{aligned}
 \]\\
 
@@ -354,13 +354,13 @@ Der MOTOR fährt zum angegebenen Wegpunkt (WAY\_POINT). Dabei kann die Geschwind
 Falls Standardwerte für Geschwindigkeit, Beschleunigung und Verzögerung verwendet werden sollen, können die jeweiligen Parameter auf 0x00 gesetzt werden.\\
 Umrechnung der Geschwindigkeit:
 \[
-	\left[step/s\right] = SPEED \cdot 4
+	\left[step/s\right] = \frac{SPEED \cdot 2^{-16}}{250ns}
 \]\\
 Umrechnung der Beschleunigung:
 \[
 	\begin{aligned}
-		\left[step/s^2\right] &= ACC \cdot 16 \\
-		\left[step/s^2\right] &= DEC \cdot 16
+		\left[step/s^2\right] &= \frac{ACC \cdot 2^{-36}}{(250ns)^2} \\
+		\left[step/s^2\right] &= \frac{DEC \cdot 2^{-36}}{(250ns)^2}
 	\end{aligned}
 \]
 
