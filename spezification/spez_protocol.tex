@@ -128,7 +128,10 @@ Command code: \textbf{\IMV}\\\\
 \end{tabular}
 \paragraph*{Description\\}
 Der gewählte MOTOR fährt zur Initialisierung in der angegebenen Richtung (DIR) bis an eine Endposition (zB. mechanischer Anschlag).
-Sobald diese Position erreicht ist, bleibt der Motor stehen und ist bereit.\\ 
+Sobald diese Position erreicht ist, bleibt der Motor stehen, setzt die absolute Position auf null und ist bereit. Die angegebene Geschwindigkeit kann folgendermassen umgerechnet werden:
+\[
+	\left[step/s\right] = SPEED \cdot 4096
+\]\\ 
 
 \subsection{MoveTo (MOTOR, DIR, ABS\_POS, SPEED, ACC, DEC)}
 Command code: \textbf{\MTO}\\\\
@@ -147,8 +150,19 @@ Command code: \textbf{\MTO}\\\\
 	Byte 8 &  \multicolumn{8}{c|}{DEC}  \\ \hline
 \end{tabular}
 \paragraph*{Description\\}
-Der gewählt MOTOR fährt zu eine bestimmten absoluten Position (ABS\_POS). Dabei kann dem Motor eine Richtung (DIR) sowie eine Geschwindigkeit (SPEED in $\frac{Steps}{s}$) vorgegeben werden. Des weiteren kann eine Beschleunigungsrampe (ACC in $\frac{Steps}{s^2}$) und eine Verzögerungsrampe vorgegeben werden (DEC in $\frac{Steps}{s^2}$).\\
+Der gewählt MOTOR fährt zu eine bestimmten absoluten Position (ABS\_POS). Dabei kann dem Motor eine Richtung (DIR) sowie eine Geschwindigkeit (SPEED) vorgegeben werden. Des weiteren kann eine Beschleunigungsrampe (ACC) und eine Verzögerungsrampe vorgegeben werden (DEC).\\
 Falls Standardwerte für Geschwindigkeit, Beschleunigung und Verzögerung verwendet werden sollen, können die jeweiligen Parameter auf 0x00 gesetzt werden.\\
+Umrechnung der Geschwindigkeit:
+\[
+	\left[step/s\right] = SPEED \cdot 4
+\]\\
+Umrechnung der Beschleunigung:
+\[
+	\begin{aligned}
+		\left[step/s^2\right] &= ACC \cdot 16 \\
+		\left[step/s^2\right] &= DEC \cdot 16
+	\end{aligned}
+\]\\
 
 \subsection{WaitMoved (MOTOR, TIMEOUT)}
 Command code: \textbf{\WTM}\\\\
@@ -190,8 +204,19 @@ Command code: \textbf{\MOV}\\\\
 	Byte 5 &  \multicolumn{8}{c|}{DEC}  \\ \hline
 \end{tabular}
 \paragraph*{Description\\}
-Der gewählt MOTOR fährt mit der angegebenen Geschwindigkeit (SPEED in $\frac{Steps}{s}$) in die Richtung DIR. Es kann eine Beschleunigungsrampe (ACC in $\frac{Steps}{s^2}$) und eine Verzögerungsrampe vorgegeben werden (DEC in $\frac{Steps}{s^2}$).\\
+Der gewählt MOTOR fährt mit der angegebenen Geschwindigkeit (SPEED) in die Richtung DIR. Es kann eine Beschleunigungsrampe (ACC) und eine Verzögerungsrampe vorgegeben werden (DEC).\\
 Falls Standardwerte für Geschwindigkeit, Beschleunigung und Verzögerung verwendet werden sollen, können die jeweiligen Parameter auf 0x00 gesetzt werden.\\
+Umrechnung der Geschwindigkeit:
+\[
+	\left[step/s\right] = SPEED \cdot 4096
+\]\\
+Umrechnung der Beschleunigung:
+\[
+	\begin{aligned}
+		\left[step/s^2\right] &= ACC \cdot 16 \\
+		\left[step/s^2\right] &= DEC \cdot 16
+	\end{aligned}
+\]\\
 
 \subsection{StopMove (MOTOR, IS\_HARDSTOP)}
 Command code: \textbf{\SPM}\\\\
@@ -325,10 +350,20 @@ Command code: \textbf{\MWP}\\\\
 	Byte 5 &  \multicolumn{8}{c|}{DEC}  \\ \hline
 \end{tabular}
 \paragraph*{Description\\}
-Der MOTOR fährt zum angegebenen Wegpunkt (WAY\_POINT). Dabei kann die Geschwindigkeit ((SPEED in $\frac{Steps}{s}$)), sowie eine Beschleunigungsrampe (ACC in $\frac{Steps}{s^2}$) und Verzögerungsrampe (DEC in $\frac{Steps}{s^2}$) vorgegeben werden.\\
+Der MOTOR fährt zum angegebenen Wegpunkt (WAY\_POINT). Dabei kann die Geschwindigkeit (SPEED), sowie eine Beschleunigungsrampe (ACC) und Verzögerungsrampe (DEC) vorgegeben werden.\\
 Falls Standardwerte für Geschwindigkeit, Beschleunigung und Verzögerung verwendet werden sollen, können die jeweiligen Parameter auf 0x00 gesetzt werden.\\
+Umrechnung der Geschwindigkeit:
+\[
+	\left[step/s\right] = SPEED \cdot 4
+\]\\
+Umrechnung der Beschleunigung:
+\[
+	\begin{aligned}
+		\left[step/s^2\right] &= ACC \cdot 16 \\
+		\left[step/s^2\right] &= DEC \cdot 16
+	\end{aligned}
+\]
 
-\newpage
 \section{Errorcodes}
 Errorcodes werden mit der Response Structure gesendet. 
 Das Acknowledge Byte ist auf den Wert 0x00 und das erste Byte beinhaltet den Error-Code.\\\\
