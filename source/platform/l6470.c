@@ -453,7 +453,7 @@ L6470_status L6470_ParseStatus(uint16 u16_state){
 *	ist 20-bit
 **/
 uint24 L6470_speedCalc(uint8 stepsPerSec){
-	uint24 temp = (uint24)stepsPerSec * 4112; // faktor = (2^20 - 1)/(2^8 - 1)
+	uint24 temp = (uint24)stepsPerSec << 12; // faktor = (2^20 - 1)/(2^8 - 1)
 	
 	return (temp > 0x0FFFFF) ? 0x0FFFFF : temp;
 }
@@ -472,7 +472,7 @@ uint24 L6470_speedCalc(uint8 stepsPerSec){
 *	ist 10-bit
 **/
 uint24 L6470_maxSpeedCalc(uint8 stepsPerSec){
-	uint24 temp = (uint24)stepsPerSec * 4; // faktor = (2^10 - 1)/(2^8 - 1)
+	uint24 temp = (uint24)stepsPerSec << 2; // faktor = (2^10 - 1)/(2^8 - 1)
 
 	return (temp > 0x0003FF) ? 0x0003FF : temp;
 }
@@ -491,7 +491,7 @@ uint24 L6470_maxSpeedCalc(uint8 stepsPerSec){
 *	ist 12-bit
 **/
 uint24 L6470_accCalc(uint8 stepsPerSecSqrt){
-	uint24 temp = (uint24)stepsPerSecSqrt * 16; // faktor = (2^12 - 1)/(2^8 - 1)
+	uint24 temp = (uint24)stepsPerSecSqrt << 4; // faktor = (2^12 - 1)/(2^8 - 1)
 
 	return (temp > 0x000FFF) ? 0x000FFF : temp;
 
