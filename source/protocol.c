@@ -19,6 +19,7 @@
 #include "platform\port.h"
 
 #include "platform\L6470.h"
+#include "platform\a3977.h"
 
 /**----------------- CONSTANTS -----------------**/
 //Array mit allen Funktionspointern
@@ -163,6 +164,22 @@ rspstruct moveTo(struct MoveToPayload* payload){
 
 		response.ack = 1;
 		return response;
+	}else if((iMotNr - SPI_MOTORS) < STEPPERS){
+		if(A3977_isMoving() == 1){
+			response.payload0 = err_MotornRdy;
+			return response;
+		}
+
+		if((*payload).acc != 0)
+			m4_state.acc = (*payload).acc;
+		if((*payload).dec != 0)
+			m4_state.dec = (*payload).dec;
+		if((*payload).speed != 0)
+			m4_state.speed = (*payload).speed;
+
+		A3977_goTo_Dir((*payload).direction, swap24((*payload).absPos));
+		response.ack = 1;
+		return response;
 	}
 
 	response.payload0 = err_InvAddress;
@@ -270,6 +287,10 @@ rspstruct stopMove(struct StopMovePayload* payload){
 
 		response.ack = 1;
 		return response;
+	}else if((iMotNr - SPI_MOTORS) < STEPPERS){
+		A3977_stopMove((*payload).isHardStop);
+		response.ack = 1;
+		return response;
 	}
 
 	response.payload0 = err_InvAddress;
@@ -291,6 +312,10 @@ rspstruct getAbsPos(struct GetAbsPosPayload* payload){
 	if (iMotNr < SPI_MOTORS){
 		response.ack = 1;
 		*(uint24*)&response.payload0 = L6470_getParam(iMotNr, ABS_POS);
+		return response;
+	}else if((iMotNr - SPI_MOTORS) < STEPPERS){
+		response.ack = 1;
+		*(uint24*)&response.payload0 = A3977_getAbsPos();
 		return response;
 	}
 
@@ -553,5 +578,5 @@ uint16 swap16(uint16 val){
 *	Ändert den Endian-Typ einer 24bit Zahl
 **/
 uint24 swap24(uint24 val){
-	return (val << 16) | (val >> 16) | (val & 0x0F0);
+	return (val << 16) | (val >> 16) | (val & 0x00FF00);
 }

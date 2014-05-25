@@ -18,6 +18,7 @@
 
 #include "team27.h"
 #include "L6470.h"
+#include "A3977.h"
 
 volatile unsigned char* gpio_addr[GPIO] = {	&PRT_A,
 											&PRT_A,
@@ -127,6 +128,7 @@ void init_motors(void){
 	TRISC2 = OUTPUT;	//Step Clock
 	TRISD2 = OUTPUT;	//Holding
 	M4_Hold = 1;		//IsHolding
+	init_a3977(128,9,9);
 
 	/**************************
 	**
