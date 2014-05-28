@@ -46,10 +46,11 @@ int main(void){
 	init_port();
 	init_uart();
 	init_spi();
-	init_motors();
 	enable_interrupt();
+	init_motors();
 	reset_Queue();
-
+	
+	
 	for(;;){
 		if(read_Queue(&_received_Data)){
 			commandptr = parseCommand();

@@ -382,7 +382,7 @@ uint8 L6470_parseParamSend(uint8 param, uint24* value){
 	if (*value > mask)
 		*value = mask;
 
-	*value = (*value) << ((3 - cByte_len) * 8);
+	*value = swap24((*value) << ((3 - cByte_len) * 8));
 
 	return cByte_len;
 }

@@ -72,19 +72,20 @@ void interrupt handler(void){
 		m4_state.stepCount++;
 
 		if(m4_state.softStop == 1){
-			if(CCPR1 > m4_state.maxCCPR || (0xFFFF - CCPR1) < m4_state.CCPR1inc){
+			if(CCPR1 >= m4_state.maxCCPR || (0xFFFF - CCPR1) < m4_state.CCPR1inc){
 				m4_state.motorState = 0;
 				m4_state.softStop = 0;
 				m4_state.stepCount = 0;
 				CCP1IF = 0;
 				return;
-			}			
-			CCPR1 += m4_state.CCPR1inc;
+			}		
+			if(m4_state.stepCount%STP_MOD == 0)
+				CCPR1 += m4_state.CCPR1inc;
 		}else if(m4_state.motorState == 1){ // Beschleunigen
 			if(CCPR1 < m4_state.minCCPR || CCPR1 < m4_state.CCPR1dec){
 				CCPR1 = m4_state.minCCPR;
 				m4_state.motorState = 2; // konstante Phase
-			}else{
+			}else if(m4_state.stepCount%STP_MOD == 0){
 				CCPR1 -= m4_state.CCPR1dec;
 			}
 
@@ -94,7 +95,8 @@ void interrupt handler(void){
 			if(m4_state.stepCount == m4_state.decStp)
 				m4_state.motorState = 3; // Verzögerungsphase
 		}else if(m4_state.motorState == 3){ // Bremsen
-			CCPR1 += m4_state.CCPR1inc;
+			if(m4_state.stepCount%STP_MOD == 0)
+				CCPR1 += m4_state.CCPR1inc;
 
 			if(CCPR1 > m4_state.maxCCPR)
 				CCPR1 = m4_state.maxCCPR;

@@ -74,22 +74,22 @@ void A3977_goTo_Dir(uint8 dir, uint24 abs_pos){
 	constSpd = (m4_state.speed^2 - START_SPEED^2)/(m4_state.acc ) << 3;
 
 
-	/*if(constSpd > n1){ // Gesamte Strecke reicht nicht bis zur Geschwindigkeit
-		m4_state.constStp = n1;
+	if(constSpd > n1){ // Gesamte Strecke reicht nicht bis zur Geschwindigkeit
 		m4_state.decStp = n1;
-	}else*/{
-		//m4_state.constStp = constSpd;
-
+	}else{
 		// Anzahl Schritte bis zum Stillstand
 		decPhase = (m4_state.speed^2 - START_SPEED^2)/(m4_state.dec ) << 3;
 		m4_state.decStp = divPos - decPhase;
-
-		deltaCCPR = ((625000 / START_SPEED) >> (1 + STP_MOD + 6)) -  ((625000 / m4_state.speed) >> (1 + STP_MOD + 6));
-
-		m4_state.CCPR1dec = deltaCCPR / constSpd;
-		m4_state.CCPR1inc = deltaCCPR / decPhase;
 	}
 
+	deltaCCPR = ((625000 / START_SPEED) >> (1 + STP_MOD + 6)) -  ((625000 / m4_state.speed) >> (1 + STP_MOD + 6));
+
+	m4_state.CCPR1dec = deltaCCPR / constSpd;
+	if(m4_state.CCPR1dec == 0)
+		m4_state.CCPR1dec = 1;
+	m4_state.CCPR1inc = deltaCCPR / decPhase;
+	if(m4_state.CCPR1inc == 0);
+		m4_state.CCPR1inc = 1;
 
 	m4_state.motorState = 1;
 
