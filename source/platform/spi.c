@@ -129,6 +129,6 @@ void set_CS(uint8 iAddress){
 *	entsprechende Zeit.
 **/
 void reset_CS(void){
-	PORTE_IO.nCS = 3;
+	PORTE_IO.nCS = 7;
 	_delay(0x05);	//wait 1us (t_disCS > 800ns)
 }

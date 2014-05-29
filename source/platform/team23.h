@@ -12,6 +12,8 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
+/**------------------ PROTOTYPES ------------------**/
+void init_motors(void);
 
 /**------------------ DEFINES ------------------**/
 #ifndef TEAM23_H
@@ -26,6 +28,11 @@
 // Anzahl DC Motors
 #define DC_MOTORS 1
 
+// Anzahl GPIO's
+#define GPIO 14
+
+extern volatile unsigned char* gpio_addr[GPIO];
+extern volatile unsigned char gpio_offs[GPIO];
 
 // Register: PORTA
 extern volatile unsigned char           PRT_A               @ 0xF80;
@@ -140,4 +147,6 @@ extern volatile bit                     DC_RW               @ (((unsigned) &PRT_
 extern volatile bit                     nCS1                @ (((unsigned) &PRT_E)*8) + 0;
 extern volatile bit                     nCS2                @ (((unsigned) &PRT_E)*8) + 1;
 extern volatile bit                     nCS3                @ (((unsigned) &PRT_E)*8) + 2;
+
+extern volatile bit						M4_DIR				@ (((unsigned) &PRT_C)*8) + 0; //Unused Port
 #endif  // !TEAM23_H
