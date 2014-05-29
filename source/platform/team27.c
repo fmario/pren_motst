@@ -12,6 +12,8 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
+#ifdef T27
+
 #include <htc.h>
 
 #include "definitions.h"
@@ -140,3 +142,5 @@ void init_motors(void){
 	DC_FW = 1;
 	DC_RW = 1;			//HiZ State 
 }
+
+#endif

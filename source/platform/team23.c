@@ -12,6 +12,8 @@
 *	Compiler:		HI-TECH C Compiler for PIC18 (v9.8)
 **/
 
+#ifdef T23
+
 #include <htc.h>
 
 #include "definitions.h"
@@ -139,3 +141,6 @@ void init_motors(void){
 	TRISB0 = OUTPUT;	//Ventil
 
 }
+
+
+#endif
