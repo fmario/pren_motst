@@ -32,6 +32,10 @@ void init_motors(void);
 // Anzahl GPIO's
 #define GPIO 13
 
+#define ACC_DIVISOR 1
+#define DEC_DIVISOR 1
+#define SPEED_DIVISOR 1
+
 extern volatile unsigned char* gpio_addr[GPIO];
 extern volatile unsigned char gpio_offs[GPIO];
 
