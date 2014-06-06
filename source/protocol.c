@@ -107,24 +107,6 @@ rspstruct initMove(struct InitMovePayload* payload){
 			return response;
 		}
 
-		if ((*payload).acc != 0)
-			L6470_setParam(iMotNr, ACC, L6470_accCalc((*payload).acc));
-		if ((*payload).dec != 0)
-			L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload).dec));
-
-		L6470_run(iMotNr, (*payload).direction, L6470_speedCalc((*payload).speed));
-
-		while(PORTB_IO.nFlag & (1<<iMotNr));
-
-		L6470_hardStop(iMotNr);
-
-		L6470_status state = L6470_ParseStatus(L6470_getStatus(iMotNr));
-
-		if (state.OCD && state.STEP_LOSS_A && state.STEP_LOSS_B){
-			response.payload0 = err_MotorErr;
-			return response; //Kein Schritt verloren oder Overcurrent
-		}
-
 		L6470_resetPos(iMotNr);
 
 		response.ack = 1;
