@@ -74,7 +74,7 @@ void init_motors(void){
 	//L6470_setParam(cAddress, DEC, 0x??);
 	//L6470_setParam(cAddress, MAX_SPEED, 0x10E);
 	//L6470_setParam(cAddress, FS_SPD, 0x10E);
-	L6470_setParam(cAddress, KVAL_HOLD, 0x4F);	//0.098 x Vs
+	L6470_setParam(cAddress, KVAL_HOLD, 0x1F);	//0.098 x Vs
 	L6470_setParam(cAddress, KVAL_RUN, 0x7F);	//0.996 x Vs
 	L6470_setParam(cAddress, KVAL_ACC, 0x7F);	//0.496 x Vs
 	L6470_setParam(cAddress, KVAL_DEC, 0x7F);	//0.496 x Vs
@@ -95,7 +95,7 @@ void init_motors(void){
 	//L6470_setParam(cAddress, DEC, 0x??);
 	//L6470_setParam(cAddress, MAX_SPEED, 0x10E);
 	//L6470_setParam(cAddress, FS_SPD, 0x10E);
-	L6470_setParam(cAddress, KVAL_HOLD, 0x4F);	//0.098 x Vs
+	L6470_setParam(cAddress, KVAL_HOLD, 0x1F);	//0.098 x Vs
 	L6470_setParam(cAddress, KVAL_RUN, 0x7F);	//0.996 x Vs
 	L6470_setParam(cAddress, KVAL_ACC, 0x7F);	//0.377 x Vs
 	L6470_setParam(cAddress, KVAL_DEC, 0x7F);	//0.377 x Vs
@@ -116,7 +116,7 @@ void init_motors(void){
 	//L6470_setParam(cAddress, DEC, 0x??);
 	//L6470_setParam(cAddress, MAX_SPEED, 0x??);
 	//L6470_setParam(cAddress, FS_SPD, 0x??);
-	L6470_setParam(cAddress, KVAL_HOLD, 0x4F);	//0.098 x Vs
+	L6470_setParam(cAddress, KVAL_HOLD, 0x1F);	//0.098 x Vs
 	L6470_setParam(cAddress, KVAL_RUN, 0x7F);	//0.996 x Vs
 	L6470_setParam(cAddress, KVAL_ACC, 0x7F);	//0.496 x Vs
 	L6470_setParam(cAddress, KVAL_DEC, 0x7F);	//0.496 x Vs
