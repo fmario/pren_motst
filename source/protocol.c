@@ -107,6 +107,15 @@ rspstruct initMove(struct InitMovePayload* payload){
 	initResp(&response);
 
 	if(iMotNr < SPI_MOTORS){
+<<<<<<< HEAD
+=======
+
+		if (L6470_checkStartConditions(iMotNr) == 0){
+			response.payload0 = err_MotornRdy;
+			return response;
+		}
+
+>>>>>>> 61e2ea2ae3af626c998d80f102533a44547e501a
 		L6470_resetPos(iMotNr);
 
 		response.ack = 1;
