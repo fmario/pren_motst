@@ -26,11 +26,13 @@ void initResp(rspstruct*);
 
 rspstruct initMove(struct InitMovePayload* payload);
 rspstruct moveTo(struct MoveToPayload* payload);
+void saveLogTo(uint24 pos);
 rspstruct waitMoved(struct WaitMovedPayload* payload);
 rspstruct isReady(struct IsReadyPayload* payload);
 rspstruct move(struct MovePayload* payload);
 rspstruct stopMove(struct StopMovePayload* payload);
 rspstruct getAbsPos(struct GetAbsPosPayload* payload);
+void saveLogAP(uint24 pos);
 rspstruct setPin(struct SetPinPayload* payload);
 rspstruct getPin(struct GetPinPayload* payload);
 rspstruct configPin(struct ConfigPinPayload* payload);
@@ -56,6 +58,9 @@ extern const uint8 err_MotorErr;
 extern const uint8 err_fWayPointBuf;
 extern const uint8 err_InvWayPoint;
 extern const uint8 err_WrongPin;
+
+extern uint24 log[20];
+extern uint24 log1[20];
 
 /**------------------ DEFINES ------------------**/
 #ifndef PROTOCOL_H

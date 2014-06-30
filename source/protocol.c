@@ -41,6 +41,12 @@ const void* pCommand[NUMBER_COMMAND] = {
 					&dcMove
 				};
 
+uint24 log[20];
+uint8 cLog = 0;
+
+uint24 log1[20];
+uint8 cLog1 = 0;
+
 /**-------------- EXTERN VARIABLES ---------------**/
 //Error codes
 const uint8 err_fBuffer = 0xE0;
@@ -101,32 +107,13 @@ rspstruct initMove(struct InitMovePayload* payload){
 	initResp(&response);
 
 	if(iMotNr < SPI_MOTORS){
-
-		if (L6470_checkStartConditions(iMotNr) == 0){
-			response.payload0 = err_MotornRdy;
-			return response;
-		}
-
-		if ((*payload).acc != 0)
-			L6470_setParam(iMotNr, ACC, L6470_accCalc((*payload).acc));
-		if ((*payload).dec != 0)
-			L6470_setParam(iMotNr, DEC, L6470_accCalc((*payload).dec));
-
-		L6470_run(iMotNr, (*payload).direction, L6470_speedCalc((*payload).speed));
-
-		while(PORTB_IO.nFlag & (1<<iMotNr));
-
-		L6470_hardStop(iMotNr);
-
-		L6470_status state = L6470_ParseStatus(L6470_getStatus(iMotNr));
-
-		if (state.OCD && state.STEP_LOSS_A && state.STEP_LOSS_B){
-			response.payload0 = err_MotorErr;
-			return response; //Kein Schritt verloren oder Overcurrent
-		}
-
 		L6470_resetPos(iMotNr);
 
+		response.ack = 1;
+		return response;
+	}else if((iMotNr - SPI_MOTORS) < STEPPERS){
+		
+		A3977_resetPos();
 		response.ack = 1;
 		return response;
 	}
@@ -160,6 +147,7 @@ rspstruct moveTo(struct MoveToPayload* payload){
 		if((*payload).speed != 0)
 			L6470_setParam(iMotNr, MAX_SPEED, L6470_maxSpeedCalc((*payload).speed));
 
+		saveLogTo((*payload).absPos);
 		L6470_goTo_Dir(iMotNr, (*payload).direction, (*payload).absPos);
 
 		response.ack = 1;
@@ -186,6 +174,11 @@ rspstruct moveTo(struct MoveToPayload* payload){
 	return response;
 }
 
+void saveLogTo(uint24 pos){
+	log1[cLog1] = swap24(pos);
+	cLog1 = (++cLog1)%20;
+}
+
 /**
 *	Function:	waitMoved
 *	Parameter:	(struct WaitMovedPayload*) data
@@ -199,11 +192,7 @@ rspstruct waitMoved(struct WaitMovedPayload* payload){
 	initResp(&response);
 
 	if (iMotNr < SPI_MOTORS){
-		/*
-		
-		TODO **********************************************************************************************************
-		
-		*/
+		while(L6470_isMoving(iMotNr));
 	}
 
 
@@ -312,6 +301,7 @@ rspstruct getAbsPos(struct GetAbsPosPayload* payload){
 	if (iMotNr < SPI_MOTORS){
 		response.ack = 1;
 		*(uint24*)&response.payload0 = L6470_getParam(iMotNr, ABS_POS);
+		saveLogAP(*(uint24*)&response.payload0);
 		return response;
 	}else if((iMotNr - SPI_MOTORS) < STEPPERS){
 		response.ack = 1;
@@ -321,6 +311,11 @@ rspstruct getAbsPos(struct GetAbsPosPayload* payload){
 
 	response.payload0 = err_InvAddress;
 	return response;
+}
+
+void saveLogAP(uint24 pos){
+	log[cLog] = swap24(pos);
+	cLog = (++cLog)%20;
 }
 
 /**
